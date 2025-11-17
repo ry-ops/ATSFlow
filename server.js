@@ -54,7 +54,7 @@ Format your response clearly with headers and bullet points.`;
                 'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
-                model: 'claude-3-5-sonnet-20240620',
+                model: 'claude-3-sonnet-20240229',
                 max_tokens: 4096,
                 messages: [{
                     role: 'user',
@@ -65,8 +65,12 @@ Format your response clearly with headers and bullet points.`;
 
         if (!response.ok) {
             const error = await response.json();
+            console.error('Claude API Error:', {
+                status: response.status,
+                error: error
+            });
             return res.status(response.status).json({
-                error: error.error?.message || 'API request failed'
+                error: error.error?.message || JSON.stringify(error)
             });
         }
 
