@@ -117,54 +117,28 @@ async function analyzeResume() {
     }
 }
 
-// Call Claude API
+// Call Claude API via backend proxy
 async function callClaudeAPI() {
-    const prompt = `You are an expert resume consultant and ATS (Applicant Tracking System) specialist.
-
-Analyze the following resume against the job description and provide comprehensive feedback.
-
-RESUME:
-${state.resumeText}
-
-JOB DESCRIPTION:
-${state.jobText}
-
-Please provide your analysis in the following structure:
-
-1. OVERALL MATCH SCORE (0-100): Provide a numerical score
-2. KEY STRENGTHS: List 3-5 strengths of this resume for this specific job
-3. GAPS AND CONCERNS: List 3-5 areas where the resume doesn't match the job requirements
-4. RECOMMENDATIONS: Provide 5-7 specific, actionable recommendations to improve the resume
-5. ATS COMPATIBILITY: Analyze ATS-friendliness and provide a score (0-100) with explanations
-6. KEYWORD ANALYSIS: List important keywords from the job description that are missing or underutilized in the resume
-7. FORMATTING SUGGESTIONS: Provide specific formatting improvements for better ATS parsing
-
-Format your response clearly with headers and bullet points.`;
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Use backend proxy to avoid CORS issues
+    const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': state.apiKey,
-            'anthropic-version': '2023-06-01'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            model: 'claude-3-5-sonnet-20241022',
-            max_tokens: 4096,
-            messages: [{
-                role: 'user',
-                content: prompt
-            }]
+            resumeText: state.resumeText,
+            jobText: state.jobText,
+            apiKey: state.apiKey
         })
     });
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error?.message || 'API request failed');
+        throw new Error(error.error || 'API request failed');
     }
 
     const data = await response.json();
-    return data.content[0].text;
+    return data.analysis;
 }
 
 // Display results
