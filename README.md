@@ -1,3 +1,5 @@
+<img src="https://github.com/ry-ops/Resumate/blob/main/ResumMate.png" width="100%">
+
 # ResuMate
 
 <div align="center">
