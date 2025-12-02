@@ -467,42 +467,92 @@
                 </div>
 
                 <div class="step-content">
-                    <div class="document-options" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                    <!-- Document Generators (2x2 Grid) -->
+                    <h2 style="color: var(--text-color); margin-bottom: 1.5rem; font-size: 1.25rem;">📄 Document Generators</h2>
+                    <div class="document-options" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 3rem;">
                         <!-- Cover Letter -->
-                        <div class="document-card" style="background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s;">
-                            <div class="document-icon" style="font-size: 3rem; margin-bottom: 1rem;">✉️</div>
-                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem;">Cover Letter</h3>
-                            <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6;">
-                                Generate a tailored cover letter that matches your resume and the job description.
+                        <div class="document-card" style="background: var(--card-bg); padding: 1.75rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s; cursor: pointer;" onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                            <div class="document-icon" style="font-size: 2.5rem; margin-bottom: 0.75rem;">✉️</div>
+                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem; font-size: 1.125rem;">Cover Letter</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5; font-size: 0.9rem;">
+                                Tailored letter highlighting relevant experience for this specific job.
                             </p>
                             <button class="btn-primary" id="generate-cover-letter" style="width: 100%;">
-                                Generate Cover Letter
+                                Generate
                             </button>
                         </div>
 
                         <!-- Executive Brand Statement -->
-                        <div class="document-card" style="background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s;">
-                            <div class="document-icon" style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
-                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem;">Executive Brand Statement</h3>
-                            <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6;">
-                                Create a powerful 2-3 paragraph professional brand statement for LinkedIn and networking.
+                        <div class="document-card" style="background: var(--card-bg); padding: 1.75rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s; cursor: pointer;" onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                            <div class="document-icon" style="font-size: 2.5rem; margin-bottom: 0.75rem;">💼</div>
+                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem; font-size: 1.125rem;">Executive Brand Statement</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5; font-size: 0.9rem;">
+                                First-person statement (2-3 paragraphs) for LinkedIn About section.
                             </p>
                             <button class="btn-primary" id="generate-brand-statement" style="width: 100%;">
-                                Generate Brand Statement
+                                Generate
                             </button>
                         </div>
 
-                        <!-- LinkedIn Optimization -->
-                        <div class="document-card" style="background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s;">
-                            <div class="document-icon" style="font-size: 3rem; margin-bottom: 1rem;">🔗</div>
-                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem;">LinkedIn Headline & Summary</h3>
-                            <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6;">
-                                Optimize your LinkedIn profile with a compelling headline and summary.
+                        <!-- Executive Bio -->
+                        <div class="document-card" style="background: var(--card-bg); padding: 1.75rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s; cursor: pointer;" onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                            <div class="document-icon" style="font-size: 2.5rem; margin-bottom: 0.75rem;">📝</div>
+                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem; font-size: 1.125rem;">Executive Bio</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5; font-size: 0.9rem;">
+                                Third-person bio (150-200 words) for conferences and press releases.
                             </p>
-                            <button class="btn-primary" id="generate-linkedin" style="width: 100%;">
-                                Generate LinkedIn Content
+                            <button class="btn-primary" id="generate-executive-bio" style="width: 100%;">
+                                Generate
                             </button>
                         </div>
+
+                        <!-- Status Inquiry Letter -->
+                        <div class="document-card" style="background: var(--card-bg); padding: 1.75rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s; cursor: pointer;" onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                            <div class="document-icon" style="font-size: 2.5rem; margin-bottom: 0.75rem;">📬</div>
+                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem; font-size: 1.125rem;">Status Inquiry Letter</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5; font-size: 0.9rem;">
+                                Professional follow-up letter to check on your application status.
+                            </p>
+                            <button class="btn-primary" id="generate-followup-letter" style="width: 100%;">
+                                Generate
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Profile Review Section -->
+                    <div class="linkedin-section" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%); padding: 2rem; border-radius: 12px; border: 2px solid var(--primary-color); margin-bottom: 2rem;">
+                        <h2 style="color: var(--text-color); margin-bottom: 1rem; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                            🔗 LinkedIn Profile Review & Optimizer
+                        </h2>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6;">
+                            Submit your LinkedIn profile URL or paste your profile content for AI-powered optimization suggestions.
+                        </p>
+
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <input
+                                type="url"
+                                id="linkedin-url"
+                                placeholder="https://linkedin.com/in/yourprofile"
+                                style="flex: 1; padding: 0.875rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; color: var(--text-color); background: var(--card-bg);">
+                            <button class="btn-primary" id="fetch-linkedin-profile" style="min-width: 120px;">
+                                Fetch Profile
+                            </button>
+                        </div>
+
+                        <div class="divider" style="text-align: center; color: var(--text-muted); font-weight: 500; position: relative; margin: 1.5rem 0;">
+                            <span style="background: var(--card-bg); padding: 0 1rem; position: relative; z-index: 1;">OR</span>
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border-color);"></div>
+                        </div>
+
+                        <textarea
+                            id="linkedin-content"
+                            placeholder="Paste your LinkedIn profile content here (headline, about section, experience descriptions)..."
+                            rows="6"
+                            style="width: 100%; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.95rem; resize: vertical; color: var(--text-color); background: var(--card-bg); margin-bottom: 1rem;"></textarea>
+
+                        <button class="btn-primary" id="analyze-linkedin-profile" style="width: 100%;">
+                            🔍 Analyze & Optimize Profile
+                        </button>
                     </div>
 
                     <!-- Generated content will appear here -->
@@ -1220,7 +1270,8 @@
             // Step 6: Document generation handlers
             const generateCoverLetterBtn = document.getElementById('generate-cover-letter');
             const generateBrandStatementBtn = document.getElementById('generate-brand-statement');
-            const generateLinkedInBtn = document.getElementById('generate-linkedin');
+            const generateExecutiveBioBtn = document.getElementById('generate-executive-bio');
+            const generateFollowupLetterBtn = document.getElementById('generate-followup-letter');
 
             if (generateCoverLetterBtn) {
                 generateCoverLetterBtn.addEventListener('click', () => generateDocument('cover-letter'));
@@ -1228,12 +1279,73 @@
             if (generateBrandStatementBtn) {
                 generateBrandStatementBtn.addEventListener('click', () => generateDocument('brand-statement'));
             }
-            if (generateLinkedInBtn) {
-                generateLinkedInBtn.addEventListener('click', () => generateDocument('linkedin'));
+            if (generateExecutiveBioBtn) {
+                generateExecutiveBioBtn.addEventListener('click', () => generateDocument('executive-bio'));
+            }
+            if (generateFollowupLetterBtn) {
+                generateFollowupLetterBtn.addEventListener('click', () => generateDocument('followup-letter'));
+            }
+
+            // LinkedIn Profile handlers
+            const fetchLinkedInBtn = document.getElementById('fetch-linkedin-profile');
+            const analyzeLinkedInBtn = document.getElementById('analyze-linkedin-profile');
+
+            if (fetchLinkedInBtn) {
+                fetchLinkedInBtn.addEventListener('click', async () => {
+                    const urlInput = document.getElementById('linkedin-url');
+                    const url = urlInput?.value.trim();
+
+                    if (!url) {
+                        alert('Please enter a LinkedIn profile URL');
+                        return;
+                    }
+
+                    const loadingDiv = document.getElementById('additional-loading');
+                    if (loadingDiv) loadingDiv.style.display = 'block';
+
+                    try {
+                        const response = await fetch('/api/fetch-job', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ url })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch LinkedIn profile. Please paste your profile content manually.');
+                        }
+
+                        const result = await response.json();
+                        const contentTextarea = document.getElementById('linkedin-content');
+                        if (contentTextarea && result.content) {
+                            contentTextarea.value = result.content;
+                        }
+
+                        if (loadingDiv) loadingDiv.style.display = 'none';
+                        alert('Profile fetched! Review the content and click Analyze.');
+                    } catch (error) {
+                        console.error('[Workflow] LinkedIn fetch error:', error);
+                        if (loadingDiv) loadingDiv.style.display = 'none';
+                        alert(error.message || 'Failed to fetch profile. Please paste your content manually.');
+                    }
+                });
+            }
+
+            if (analyzeLinkedInBtn) {
+                analyzeLinkedInBtn.addEventListener('click', () => {
+                    const contentTextarea = document.getElementById('linkedin-content');
+                    const content = contentTextarea?.value.trim();
+
+                    if (!content || content.length < 50) {
+                        alert('Please provide your LinkedIn profile content (paste or fetch from URL)');
+                        return;
+                    }
+
+                    generateDocument('linkedin-review', content);
+                });
             }
 
             // Generate document function
-            async function generateDocument(type) {
+            async function generateDocument(type, linkedinContent = null) {
                 console.log('[Workflow] Generating document:', type);
 
                 const loadingDiv = document.getElementById('additional-loading');
@@ -1262,7 +1374,7 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            prompt: getDocumentPrompt(type, resumeText, jobDescription),
+                            prompt: getDocumentPrompt(type, resumeText, jobDescription, linkedinContent),
                             apiKey: apiKey || undefined
                         })
                     });
@@ -1294,7 +1406,7 @@
             }
 
             // Get document prompt based on type
-            function getDocumentPrompt(type, resumeText, jobDescription) {
+            function getDocumentPrompt(type, resumeText, jobDescription, linkedinContent) {
                 const prompts = {
                     'cover-letter': `Based on the following resume and job description, create a professional, compelling cover letter that highlights relevant experience and skills. The letter should be 3-4 paragraphs, personable yet professional.
 
@@ -1306,23 +1418,115 @@ ${jobDescription || 'General position'}
 
 Create a tailored cover letter that makes a strong case for why this candidate is perfect for the role.`,
 
-                    'brand-statement': `Based on the following resume, create a powerful executive brand statement (2-3 paragraphs) that captures the professional's unique value proposition, key achievements, and leadership style. This should be suitable for LinkedIn "About" section and networking.
+                    'brand-statement': `Based on the following resume, create a powerful executive brand statement (2-3 paragraphs) that captures the professional's unique value proposition, key achievements, and leadership style. This should be suitable for LinkedIn "About" section and networking. Write in first person.
 
 Resume:
 ${resumeText}
 
-Create a compelling professional brand statement.`,
+Create a compelling professional brand statement in first person that showcases unique value and leadership style.`,
 
-                    'linkedin': `Based on the following resume, create:
-1. A compelling LinkedIn headline (120 characters max)
-2. A professional LinkedIn summary (3-4 paragraphs)
-
-The content should highlight key achievements, skills, and professional identity.
+                    'executive-bio': `Based on the following resume, create a professional third-person executive bio (150-200 words) suitable for conference programs, press releases, speaker introductions, and professional media kits.
 
 Resume:
 ${resumeText}
 
-Create optimized LinkedIn content.`
+Create a concise, impactful third-person bio that highlights key achievements, expertise, and professional credentials. Use third person (he/she/they) throughout.`,
+
+                    'followup-letter': `Based on the following resume and job description, create a professional status inquiry (follow-up) letter to politely check on the application status. The letter should be:
+- Brief and professional (3-4 short paragraphs)
+- Express continued interest in the position
+- Politely request an update on the hiring timeline
+- Reaffirm qualifications without being pushy
+- Include appropriate subject line
+
+Resume:
+${resumeText}
+
+Job Description:
+${jobDescription || 'the position I applied for'}
+
+Create a courteous, professional follow-up letter that demonstrates continued interest while respecting the hiring manager's time.`,
+
+                    'linkedin-review': `You are a LinkedIn optimization expert conducting a comprehensive profile analysis. Analyze the following LinkedIn profile and provide a detailed optimization report with scoring and actionable recommendations.
+
+LinkedIn Profile Content:
+${linkedinContent || 'No profile content provided'}
+
+Resume for Context:
+${resumeText}
+
+Job Target for Keyword Analysis:
+${jobDescription || 'General professional advancement'}
+
+Provide a comprehensive analysis structured as follows:
+
+## PROFILE SCORE: [X/100]
+Provide an overall score based on completeness, keyword optimization, and professional presentation.
+
+## SCORING BREAKDOWN:
+- Headline Strength: [X/20]
+- Summary/About Quality: [X/20]
+- Work Experience Depth: [X/20]
+- Skills & Keywords: [X/15]
+- Profile Completeness: [X/15]
+- ATS Keyword Match: [X/10]
+
+## BASIC INFORMATION ANALYSIS:
+- Profile Photo: [Present/Missing] - Recommendation
+- Headline: Current effectiveness and improvement suggestions
+- Contact Info: Completeness check
+- Custom URL: Status and recommendation
+
+## HIGH IMPACT IMPROVEMENTS:
+Identify the top 3-5 changes that will have the biggest impact on profile visibility and recruiter appeal.
+
+## HEADLINE OPTIMIZATION:
+**Current:** [Extract current headline]
+**Recommended:** [Provide optimized version]
+**Why:** [Explain the improvement]
+
+## ABOUT/SUMMARY SECTION:
+**Current Status:** [Analyze current content]
+**Keyword Gaps:** [Identify missing keywords from job description]
+**Recommended Improvements:** [Provide specific suggestions]
+**Example Rewrite:** [Provide first paragraph rewrite as example]
+
+## WORK EXPERIENCE:
+For top 2-3 positions, provide:
+- Current description effectiveness
+- Missing impact metrics or achievements
+- Keyword optimization opportunities
+- Before/After examples
+
+## SKILLS SECTION:
+- Current Skills Assessment: [Evaluate alignment with target role]
+- Missing Critical Keywords: [List from job description]
+- Recommended Additions: [Specific skills to add]
+- Skills to Prioritize: [Top 5 skills to feature]
+
+## EDUCATION & CERTIFICATIONS:
+- Completeness check
+- Recommendations for additional certifications
+
+## TIPS & ACTIONABLE NEXT STEPS:
+1. [Immediate action item with specific instruction]
+2. [Immediate action item with specific instruction]
+3. [Immediate action item with specific instruction]
+4. [Medium-term improvement]
+5. [Long-term profile strategy]
+
+## KEYWORD FREQUENCY ANALYSIS:
+Compare profile keyword usage vs. target job description:
+- [Keyword 1]: Used X times (Target: Y times) - [Status: Good/Needs Improvement]
+- [Keyword 2]: Used X times (Target: Y times) - [Status: Good/Needs Improvement]
+- [Add 5-7 critical keywords]
+
+## LINKEDIN SEARCH VISIBILITY:
+- Current searchability assessment for target role
+- Recommended keyword placement strategies
+- Hashtag and content posting recommendations
+
+Provide detailed, personalized recommendations with specific before/after examples for each major section.`
                 };
 
                 return prompts[type] || prompts['cover-letter'];
