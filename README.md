@@ -12,7 +12,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-16+-green.svg)](https://nodejs.org/)
 [![Claude AI](https://img.shields.io/badge/AI-Claude%20Sonnet%204-purple.svg)](https://www.anthropic.com/)
 
-[Features](#features) • [Getting Started](#getting-started) • [Documentation](#documentation) • [Demo](#demo)
+[Features](#features) • [Getting Started](#getting-started) • [Documentation](#documentation)
 
 </div>
 
