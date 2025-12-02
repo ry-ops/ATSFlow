@@ -172,8 +172,11 @@
     <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
-    <!-- Core Data Management -->
+    <!-- Core Data Management (load order is important) -->
+    <script src="js/core/workflow-state.js"></script>
+    <script src="js/utils/state-migration.js"></script>
     <script src="js/core/data-bridge.js"></script>
+    <script src="js/core/state-init.js"></script>
 
     <!-- Progress Tracking -->
     <script src="js/core/progress-tracker.js"></script>

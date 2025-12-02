@@ -43,11 +43,166 @@ class PreviewController {
         // Set up toolbar event listeners
         this.setupToolbar();
 
+        // Listen to workflow state changes
+        this.setupStateListener();
+
         // Initial render
         this.render(this.getResumeState());
 
         if (typeof logger !== 'undefined') logger.info('[Preview] Initialized successfully');
         return true;
+    }
+
+    /**
+     * Set up listener for workflow state changes
+     */
+    setupStateListener() {
+        if (window.workflowState) {
+            window.workflowState.on('change', (data) => {
+                this.handleStateChange(data);
+            });
+            console.log('[Preview] Listening to workflow state changes');
+        }
+
+        // Also listen to DataBridge for backward compatibility
+        if (window.dataBridge) {
+            window.dataBridge.on('save', (data) => {
+                this.handleDataBridgeChange(data);
+            });
+            console.log('[Preview] Listening to DataBridge changes');
+        }
+    }
+
+    /**
+     * Handle workflow state changes
+     * @param {Object} data - State change data
+     */
+    handleStateChange(data) {
+        if (!data || !data.state) return;
+
+        const state = data.state;
+
+        // Check if resume text changed
+        const resumeText = state.inputs?.resume?.text || '';
+
+        // Only update if resume text exists
+        if (resumeText && resumeText.length > 0) {
+            // Transform workflow state to resume state format
+            const resumeState = this.transformWorkflowStateToResumeState(state);
+
+            // Debounced update
+            this.update(resumeState);
+        }
+    }
+
+    /**
+     * Handle DataBridge changes (backward compatibility)
+     * @param {Object} data - DataBridge data
+     */
+    handleDataBridgeChange(data) {
+        if (!data) return;
+
+        const resumeText = data.resume?.text || '';
+
+        // Only update if resume text exists
+        if (resumeText && resumeText.length > 0) {
+            const resumeState = {
+                text: resumeText,
+                sections: this.parseResumeText(resumeText)
+            };
+
+            this.update(resumeState);
+        }
+    }
+
+    /**
+     * Transform workflow state to resume state format
+     * @param {Object} workflowState - Workflow state
+     * @returns {Object} Resume state
+     */
+    transformWorkflowStateToResumeState(workflowState) {
+        const resumeText = workflowState.inputs?.resume?.text || '';
+
+        return {
+            text: resumeText,
+            sections: this.parseResumeText(resumeText),
+            metadata: {
+                fileName: workflowState.inputs?.resume?.fileName,
+                format: workflowState.inputs?.resume?.format,
+                uploadedAt: workflowState.inputs?.resume?.uploadedAt
+            }
+        };
+    }
+
+    /**
+     * Parse resume text into sections
+     * @param {string} text - Resume text
+     * @returns {Array} Parsed sections
+     */
+    parseResumeText(text) {
+        if (!text || text.length === 0) {
+            return [];
+        }
+
+        // Simple section detection based on common resume patterns
+        const sections = [];
+        const lines = text.split('\n');
+        let currentSection = null;
+        let currentContent = [];
+
+        // Common section headers
+        const sectionHeaders = [
+            'SUMMARY', 'OBJECTIVE', 'PROFILE',
+            'EXPERIENCE', 'WORK EXPERIENCE', 'EMPLOYMENT',
+            'EDUCATION', 'ACADEMIC BACKGROUND',
+            'SKILLS', 'TECHNICAL SKILLS', 'CORE COMPETENCIES',
+            'CERTIFICATIONS', 'LICENSES',
+            'PROJECTS', 'PORTFOLIO',
+            'AWARDS', 'ACHIEVEMENTS', 'HONORS',
+            'PUBLICATIONS', 'PRESENTATIONS',
+            'LANGUAGES', 'INTERESTS'
+        ];
+
+        lines.forEach(line => {
+            const trimmed = line.trim().toUpperCase();
+
+            // Check if line is a section header
+            const isHeader = sectionHeaders.some(header => trimmed === header || trimmed.startsWith(header + ':'));
+
+            if (isHeader) {
+                // Save previous section
+                if (currentSection) {
+                    sections.push({
+                        title: currentSection,
+                        content: currentContent.join('\n').trim()
+                    });
+                }
+
+                // Start new section
+                currentSection = trimmed.replace(':', '').trim();
+                currentContent = [];
+            } else if (currentSection && line.trim()) {
+                currentContent.push(line);
+            }
+        });
+
+        // Add last section
+        if (currentSection && currentContent.length > 0) {
+            sections.push({
+                title: currentSection,
+                content: currentContent.join('\n').trim()
+            });
+        }
+
+        // If no sections found, treat entire text as one section
+        if (sections.length === 0) {
+            sections.push({
+                title: 'RESUME',
+                content: text
+            });
+        }
+
+        return sections;
     }
 
     /**

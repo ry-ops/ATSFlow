@@ -216,12 +216,20 @@ class WorkflowUI {
         nextStepEl.classList.remove('locked');
         nextStepEl.setAttribute('aria-hidden', 'false');
 
-        // Scroll to top of new step
+        // Add entrance animation
+        nextStepEl.style.animation = 'slideInUp 0.5s ease-out';
+
+        // Scroll to top of new step with smooth animation
         this.scrollToTop();
       }
 
       this.currentStep = stepNumber;
       this.updateProgress(stepNumber);
+
+      // Dispatch step change event
+      window.dispatchEvent(new CustomEvent('stepChanged', {
+        detail: { step: stepNumber }
+      }));
     }, 300);
   }
 
@@ -408,17 +416,26 @@ class WorkflowUI {
   startAnalysis() {
     console.log('[WorkflowUI] Starting analysis...');
 
-    // Navigate to analysis step
-    this.goToNextStep();
+    // Show loading on button
+    const btn = document.getElementById('step-1-continue');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="btn-spinner"></span> Analyzing...';
+    }
 
-    // Show loading state
-    this.showLoading('analyze-loading');
-    this.hideElement('analyze-results');
-
-    // Simulate analysis (replace with actual API call)
+    // Navigate to analysis step with delay for button feedback
     setTimeout(() => {
-      this.showAnalysisResults();
-    }, 2000);
+      this.goToNextStep();
+
+      // Show loading state
+      this.showLoading('analyze-loading');
+      this.hideElement('analyze-results');
+
+      // Simulate analysis (replace with actual API call)
+      setTimeout(() => {
+        this.showAnalysisResults();
+      }, 2000);
+    }, 300);
   }
 
   /**
@@ -471,13 +488,22 @@ class WorkflowUI {
     const btn = document.getElementById('step-3-continue');
     if (btn) {
       const originalText = btn.innerHTML;
-      btn.innerHTML = '<span class="spinner" style="width: 20px; height: 20px;"></span> Tailoring...';
+      btn.innerHTML = '<span class="btn-spinner"></span> Tailoring Resume...';
       btn.disabled = true;
+
+      // Add success animation helper
+      const showSuccess = () => {
+        btn.innerHTML = '<span class="btn-check">✓</span> Tailored!';
+        btn.classList.add('btn-success');
+        setTimeout(() => {
+          btn.classList.remove('btn-success');
+          this.goToNextStep();
+        }, 1000);
+      };
 
       // Simulate tailoring (replace with actual API call)
       setTimeout(() => {
-        btn.innerHTML = originalText;
-        this.goToNextStep();
+        showSuccess();
       }, 2000);
     }
   }

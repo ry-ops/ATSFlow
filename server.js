@@ -897,8 +897,38 @@ app.post('/api/linkedin-job-details', rateLimit, async (req, res) => {
     }
 });
 
-// Serve index.html for root route
+// Legacy redirect rules - redirect old test pages to workflow steps
+const legacyRedirects = {
+    '/test-job-tailor.html': '/workflow.html#step-3',
+    '/test-ats-scanner.html': '/workflow.html#step-2',
+    '/test-coverletter.html': '/workflow.html#step-4',
+    '/test-careerdocs.html': '/workflow.html#step-4',
+    '/test-export.html': '/workflow.html#step-5',
+    '/test-ai.html': '/workflow.html#step-2',
+    '/test-proofread.html': '/workflow.html#step-2',
+    '/test-preview.html': '/index.html',
+    '/test-tracker.html': '/analytics-dashboard.html',
+    '/test-templates.html': '/workflow.html#step-4',
+    '/test-version-management.html': '/analytics-dashboard.html',
+    '/test-workflow.html': '/workflow.html',
+    '/dashboard.html': '/analytics-dashboard.html'
+};
+
+// Apply legacy redirects
+Object.entries(legacyRedirects).forEach(([oldPath, newPath]) => {
+    app.get(oldPath, (req, res) => {
+        logger.info(`[Redirect] ${oldPath} -> ${newPath}`);
+        res.redirect(301, newPath);
+    });
+});
+
+// Serve workflow.html as main entry point
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'workflow.html'));
+});
+
+// Serve legacy index.html at /legacy
+app.get('/legacy', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 

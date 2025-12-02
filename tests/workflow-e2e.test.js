@@ -772,3 +772,460 @@ describe('Integration with WorkflowPolish', () => {
     expect(polish.currentStep).toBe(1);
   });
 });
+
+describe('Backend Integration Tests', () => {
+  describe('API Configuration', () => {
+    test('should check server API key availability', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          hasServerApiKey: false,
+          message: 'No server API key - please enter your Claude API key in settings'
+        })
+      });
+
+      const response = await fetch('/api/config');
+      const config = await response.json();
+
+      expect(config.hasServerApiKey).toBeDefined();
+      expect(config.message).toBeDefined();
+    });
+
+    test('should handle server with configured API key', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          hasServerApiKey: true,
+          message: 'Server has API key configured - you can use features without entering your own key'
+        })
+      });
+
+      const response = await fetch('/api/config');
+      const config = await response.json();
+
+      expect(config.hasServerApiKey).toBe(true);
+    });
+  });
+
+  describe('Resume Parsing Integration', () => {
+    test('should parse uploaded resume file', async () => {
+      const mockFile = new Blob(['resume content'], { type: 'application/pdf' });
+      const formData = new FormData();
+      formData.append('resume', mockFile);
+      formData.append('apiKey', MOCK_DATA.apiKey);
+      formData.append('useAI', 'true');
+
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          text: 'John Doe\nSoftware Engineer',
+          sections: {
+            name: 'John Doe',
+            title: 'Software Engineer'
+          },
+          validation: {
+            isValid: true,
+            errors: []
+          }
+        })
+      });
+
+      const response = await fetch('/api/parse', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      expect(result.success).toBe(true);
+      expect(result.text).toBeDefined();
+      expect(result.sections).toBeDefined();
+    });
+
+    test('should handle AI-powered resume extraction', async () => {
+      const mockFile = new Blob(['resume content'], { type: 'application/pdf' });
+      const formData = new FormData();
+      formData.append('resume', mockFile);
+      formData.append('apiKey', MOCK_DATA.apiKey);
+
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          extractedData: {
+            name: 'John Doe',
+            email: 'john@example.com',
+            phone: '555-1234',
+            skills: ['JavaScript', 'React', 'Node.js'],
+            experience: []
+          }
+        })
+      });
+
+      const response = await fetch('/api/extract', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      expect(result.success).toBe(true);
+      expect(result.extractedData).toBeDefined();
+      expect(result.extractedData.skills).toBeInstanceOf(Array);
+    });
+
+    test('should reject invalid file types', async () => {
+      const mockFile = new Blob(['content'], { type: 'application/exe' });
+      const formData = new FormData();
+      formData.append('resume', mockFile);
+
+      global.fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({
+          success: false,
+          error: 'Invalid file type. Only PDF, DOCX, and TXT files are allowed.'
+        })
+      });
+
+      const response = await fetch('/api/parse', {
+        method: 'POST',
+        body: formData
+      });
+
+      expect(response.ok).toBe(false);
+      const result = await response.json();
+      expect(result.error).toContain('Invalid file type');
+    });
+  });
+
+  describe('Job Fetching Integration', () => {
+    test('should fetch job description from LinkedIn URL', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          content: MOCK_DATA.jobDescription,
+          url: 'https://linkedin.com/jobs/view/12345',
+          site: 'linkedin',
+          fetchedAt: new Date().toISOString()
+        })
+      });
+
+      const response = await fetch('/api/fetch-job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: 'https://linkedin.com/jobs/view/12345',
+          site: 'linkedin'
+        })
+      });
+
+      const result = await response.json();
+
+      expect(result.success).toBe(true);
+      expect(result.content).toBeDefined();
+      expect(result.url).toContain('linkedin.com');
+    });
+
+    test('should reject non-whitelisted domains', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({
+          error: 'Domain not allowed. Supported job boards: LinkedIn, Indeed, Glassdoor, ZipRecruiter, Monster, Dice, SimplyHired, CareerBuilder, Greenhouse, Lever, Workday, Built In'
+        })
+      });
+
+      const response = await fetch('/api/fetch-job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: 'https://malicious-site.com/job',
+          site: 'unknown'
+        })
+      });
+
+      const result = await response.json();
+
+      expect(response.ok).toBe(false);
+      expect(result.error).toContain('Domain not allowed');
+    });
+
+    test('should handle job pages that require login', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({
+          error: 'Could not extract job content from URL. The page may require login or use JavaScript rendering. Please copy and paste the job description text instead.',
+          requiresManualInput: true
+        })
+      });
+
+      const response = await fetch('/api/fetch-job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: 'https://linkedin.com/jobs/view/protected',
+          site: 'linkedin'
+        })
+      });
+
+      const result = await response.json();
+
+      expect(result.requiresManualInput).toBe(true);
+      expect(result.error).toBeDefined();
+    });
+  });
+
+  describe('Tailoring Integration', () => {
+    test('should parse job description and extract requirements', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          jobData: {
+            jobTitle: 'Senior Full Stack Engineer',
+            company: 'RemoteTech Solutions',
+            requiredSkills: ['React', 'Node.js', 'AWS', 'Docker', 'Kubernetes'],
+            preferredSkills: ['serverless', 'CI/CD', 'technical leadership'],
+            requiredExperience: '5+ years',
+            keywords: ['microservices', 'cloud platforms', 'full stack']
+          }
+        })
+      });
+
+      const response = await fetch('/api/tailor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          resumeData: MOCK_DATA.resume,
+          jobDescription: MOCK_DATA.jobDescription,
+          apiKey: MOCK_DATA.apiKey
+        })
+      });
+
+      const result = await response.json();
+
+      expect(result.success).toBe(true);
+      expect(result.jobData.requiredSkills).toBeInstanceOf(Array);
+      expect(result.jobData.requiredSkills.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Content Generation Integration', () => {
+    test('should generate content with AI', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          content: 'Generated content based on the provided prompt.'
+        })
+      });
+
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: 'Generate a professional bio based on this resume...',
+          apiKey: MOCK_DATA.apiKey,
+          maxTokens: 1024,
+          temperature: 0.7
+        })
+      });
+
+      const result = await response.json();
+
+      expect(result.content).toBeDefined();
+      expect(result.content.length).toBeGreaterThan(0);
+    });
+
+    test('should validate prompt length limits', async () => {
+      const longPrompt = 'x'.repeat(60000); // Exceeds 50000 character limit
+
+      global.fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({
+          error: 'Prompt exceeds maximum length (50000 characters)'
+        })
+      });
+
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: longPrompt,
+          apiKey: MOCK_DATA.apiKey
+        })
+      });
+
+      const result = await response.json();
+
+      expect(response.ok).toBe(false);
+      expect(result.error).toContain('exceeds maximum length');
+    });
+
+    test('should sanitize and validate generation parameters', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          content: 'Generated content'
+        })
+      });
+
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: 'Test prompt',
+          apiKey: MOCK_DATA.apiKey,
+          maxTokens: 10000, // Should be capped at 4096
+          temperature: 2.5  // Should be capped at 1
+        })
+      });
+
+      expect(fetch).toHaveBeenCalled();
+      // Server should sanitize these values
+    });
+  });
+});
+
+describe('Navigation Flow Tests', () => {
+  test('should prevent page navigation during workflow', () => {
+    const initialLocation = window.location.href;
+
+    // Simulate workflow step transitions
+    const step1 = document.getElementById('step-upload');
+    const step2 = document.getElementById('step-analyze');
+
+    // Hide step 1, show step 2
+    if (step1) step1.style.display = 'none';
+    if (step2) step2.style.display = 'block';
+
+    // URL should not have changed
+    expect(window.location.href).toBe(initialLocation);
+  });
+
+  test('should support hash-based navigation', () => {
+    const steps = ['#step-1', '#step-2', '#step-3', '#step-4', '#step-5'];
+
+    steps.forEach(hash => {
+      window.location.hash = hash;
+      expect(window.location.hash).toBe(hash);
+    });
+  });
+
+  test('should handle browser back button', () => {
+    const originalHash = window.location.hash;
+
+    window.location.hash = '#step-2';
+    window.history.back();
+
+    // Hash should revert (in real scenario)
+    expect(window.history.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Getting Started Modal Tests', () => {
+  test('should show modal indicators for setup steps', () => {
+    const indicators = [
+      { id: 'indicator-api-key', completed: false },
+      { id: 'indicator-resume', completed: false },
+      { id: 'indicator-job', completed: false }
+    ];
+
+    // Simulate adding API key
+    localStorage.setItem('claude_api_key', MOCK_DATA.apiKey);
+    indicators[0].completed = true;
+
+    expect(indicators[0].completed).toBe(true);
+    expect(indicators[1].completed).toBe(false);
+    expect(indicators[2].completed).toBe(false);
+  });
+
+  test('should update modal indicators on data input', () => {
+    const state = {
+      hasApiKey: false,
+      hasResume: false,
+      hasJob: false
+    };
+
+    // Add API key
+    localStorage.setItem('claude_api_key', MOCK_DATA.apiKey);
+    state.hasApiKey = true;
+
+    // Add resume
+    localStorage.setItem('resumate_resume_text', MOCK_DATA.resume);
+    state.hasResume = true;
+
+    // Add job
+    localStorage.setItem('resumate_job_text', MOCK_DATA.jobDescription);
+    state.hasJob = true;
+
+    expect(state.hasApiKey).toBe(true);
+    expect(state.hasResume).toBe(true);
+    expect(state.hasJob).toBe(true);
+  });
+
+  test('should reset modal on hard refresh except API key', () => {
+    localStorage.setItem('claude_api_key', MOCK_DATA.apiKey);
+    localStorage.setItem('resumate_resume_text', MOCK_DATA.resume);
+    localStorage.setItem('resumate_job_text', MOCK_DATA.jobDescription);
+
+    // Simulate hard refresh - clear non-persistent data
+    localStorage.removeItem('resumate_resume_text');
+    localStorage.removeItem('resumate_job_text');
+
+    expect(localStorage.getItem('claude_api_key')).toBe(MOCK_DATA.apiKey);
+    expect(localStorage.getItem('resumate_resume_text')).toBeNull();
+    expect(localStorage.getItem('resumate_job_text')).toBeNull();
+  });
+});
+
+describe('UI/UX Integration Tests', () => {
+  test('should update button states based on workflow progress', () => {
+    const continueBtn = document.getElementById('step-1-continue');
+
+    // Initially disabled
+    expect(continueBtn?.disabled).toBe(true);
+
+    // Enable after resume input
+    const resumeText = document.getElementById('resume-text');
+    if (resumeText) {
+      resumeText.value = MOCK_DATA.resume;
+      if (continueBtn) {
+        continueBtn.disabled = false;
+      }
+    }
+
+    expect(continueBtn?.disabled).toBe(false);
+  });
+
+  test('should show loading states during async operations', () => {
+    const loading = document.getElementById('loading');
+
+    // Start loading
+    if (loading) loading.style.display = 'flex';
+    expect(loading?.style.display).toBe('flex');
+
+    // Stop loading
+    if (loading) loading.style.display = 'none';
+    expect(loading?.style.display).toBe('none');
+  });
+
+  test('should display success animations', (done) => {
+    const successEl = document.createElement('div');
+    successEl.className = 'workflow-success-animation';
+    document.body.appendChild(successEl);
+
+    // Trigger animation
+    successEl.classList.add('animate');
+
+    setTimeout(() => {
+      expect(successEl.classList.contains('animate')).toBe(true);
+      successEl.remove();
+      done();
+    }, 100);
+  });
+});

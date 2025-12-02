@@ -1015,6 +1015,18 @@ class OnboardingManager {
         // Check for server API key on load
         this.checkServerApiKey();
 
+        // Listen to workflow state changes (new unified state management)
+        if (window.workflowState) {
+            window.workflowState.on('change', (data) => {
+                this.handleWorkflowStateChange(data);
+            });
+            console.log('[Onboarding] Listening to workflow state changes');
+
+            // Check initial state
+            this.syncWithWorkflowState();
+        }
+
+        // Fallback to direct DOM listeners if workflow state not available
         // Resume input
         const resumeText = document.getElementById('resume-text');
         const resumeFile = document.getElementById('resume-file');
@@ -1071,6 +1083,60 @@ class OnboardingManager {
                 setTimeout(() => this.completeStep('analyzed'), 2000);
             });
         }
+    }
+
+    /**
+     * Handle workflow state changes
+     * Updates progress indicators in real-time
+     * @param {Object} data - Change event data
+     */
+    handleWorkflowStateChange(data) {
+        if (!data || !data.state) return;
+
+        const state = data.state;
+
+        // Check resume uploaded
+        if (state.inputs?.resume?.text && state.inputs.resume.text.length > 50) {
+            this.completeStep('resumeUploaded');
+        }
+
+        // Check job description added
+        if (state.inputs?.job?.description && state.inputs.job.description.length > 50) {
+            this.completeStep('jobDescAdded');
+        }
+
+        // Check API key set
+        if (state.inputs?.preferences?.apiKey && state.inputs.preferences.apiKey.length > 10) {
+            this.completeStep('apiKeySet');
+        }
+
+        // Check analysis completed
+        if (state.analysis?.score !== null || state.analysis?.timestamp) {
+            this.completeStep('analyzed');
+        }
+
+        // Check if documents exported
+        if (state.documents) {
+            const hasDocument = Object.values(state.documents).some(doc => doc !== null);
+            if (hasDocument) {
+                this.completeStep('exported');
+            }
+        }
+
+        console.log('[Onboarding] Updated progress from workflow state');
+    }
+
+    /**
+     * Sync progress with current workflow state
+     * Called on initialization
+     */
+    syncWithWorkflowState() {
+        if (!window.workflowState) return;
+
+        const state = window.workflowState.getState();
+        this.handleWorkflowStateChange({ state });
+
+        console.log('[Onboarding] Synced with workflow state');
     }
 
     /**

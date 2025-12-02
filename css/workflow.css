@@ -295,6 +295,52 @@
   color: var(--color-text-disabled);
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
+}
+
+/* Button loading states */
+.btn-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.btn-check {
+  display: inline-block;
+  font-size: 20px;
+  margin-right: 8px;
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.btn-success {
+  background: var(--color-success) !important;
+  animation: successPulse 0.5s ease-out;
+}
+
+@keyframes successPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .btn-back {
@@ -766,6 +812,45 @@
   .export-card {
     border-width: 3px;
   }
+}
+
+/* ========== Score Badges ========== */
+
+.score-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+}
+
+.score-badge.score-high {
+  background: #d1fae5;
+  color: #065f46;
+  border: 2px solid #10b981;
+}
+
+.score-badge.score-medium {
+  background: #fef3c7;
+  color: #92400e;
+  border: 2px solid #f59e0b;
+}
+
+.score-badge.score-low {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 2px solid #ef4444;
+}
+
+/* ========== Error Messages ========== */
+
+.error-message {
+  padding: 1rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: var(--radius-lg);
+  border-left: 4px solid #ef4444;
+  margin: 1rem 0;
 }
 
 /* ========== Print Styles ========== */

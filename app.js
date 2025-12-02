@@ -97,7 +97,16 @@ async function handleResumeUpload(event) {
         textarea.value = text;
         textarea.disabled = false;
 
-        // Save to DataBridge
+        // Save to WorkflowState (new unified state)
+        if (window.workflowState) {
+            window.workflowState.update({
+                'inputs.resume.text': text,
+                'inputs.resume.fileName': file.name,
+                'inputs.resume.uploadedAt': new Date().toISOString()
+            });
+        }
+
+        // Save to DataBridge (backward compatibility)
         if (window.dataBridge) {
             window.dataBridge.saveResume(text);
         }
@@ -138,7 +147,15 @@ async function handleJobUpload(event) {
         textarea.value = text;
         textarea.disabled = false;
 
-        // Save to DataBridge
+        // Save to WorkflowState (new unified state)
+        if (window.workflowState) {
+            window.workflowState.update({
+                'inputs.job.description': text,
+                'inputs.job.uploadedAt': new Date().toISOString()
+            });
+        }
+
+        // Save to DataBridge (backward compatibility)
         if (window.dataBridge) {
             window.dataBridge.saveJob(text);
         }
@@ -155,7 +172,12 @@ async function handleJobUpload(event) {
 function handleResumeInput() {
     state.resumeText = document.getElementById('resume-text').value;
 
-    // Save to DataBridge
+    // Save to WorkflowState (new unified state)
+    if (window.workflowState) {
+        window.workflowState.set('inputs.resume.text', state.resumeText);
+    }
+
+    // Save to DataBridge (backward compatibility)
     if (window.dataBridge) {
         window.dataBridge.saveResume(state.resumeText);
     }
@@ -167,7 +189,12 @@ function handleResumeInput() {
 function handleJobInput() {
     state.jobText = document.getElementById('job-text').value;
 
-    // Save to DataBridge
+    // Save to WorkflowState (new unified state)
+    if (window.workflowState) {
+        window.workflowState.set('inputs.job.description', state.jobText);
+    }
+
+    // Save to DataBridge (backward compatibility)
     if (window.dataBridge) {
         window.dataBridge.saveJob(state.jobText);
     }
@@ -179,9 +206,15 @@ function handleJobInput() {
 function handleApiKeyInput() {
     state.apiKey = document.getElementById('api-key').value;
 
-    // Save to both legacy localStorage and DataBridge
+    // Save to WorkflowState (new unified state - persistent)
+    if (window.workflowState) {
+        window.workflowState.set('inputs.preferences.apiKey', state.apiKey);
+    }
+
+    // Save to legacy localStorage for backward compatibility
     localStorage.setItem('claude_api_key', state.apiKey);
 
+    // Save to DataBridge (backward compatibility)
     if (window.dataBridge) {
         window.dataBridge.updateField('preferences.apiKey', state.apiKey);
     }

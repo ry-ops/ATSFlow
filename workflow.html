@@ -220,10 +220,11 @@
                                         id="job-url"
                                         placeholder="https://linkedin.com/jobs/view/..."
                                         style="flex: 1;">
-                                    <button type="button" class="btn-secondary">
+                                    <button type="button" id="import-job-btn" class="btn-secondary">
                                         Import
                                     </button>
                                 </div>
+                                <small id="job-url-status" style="margin-top: 0.5rem; display: block;"></small>
                             </div>
 
                             <div class="divider">OR</div>
@@ -416,9 +417,43 @@
         <p>Built with ❤️ using Claude AI | <a href="https://github.com/ry-ops/ResuMate" target="_blank">GitHub</a></p>
     </footer>
 
-    <!-- Scripts -->
+    <!-- Core Dependencies -->
+    <script src="js/core/data-bridge.js"></script>
+
+    <!-- Export Libraries (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- Export Modules -->
+    <script src="js/export/pdf-export.js"></script>
+    <script src="js/export/docx-export.js"></script>
+    <script src="js/export/formats.js"></script>
+    <script src="js/export/export-manager.js"></script>
+
+    <!-- AI Modules -->
+    <script src="js/ai/job-parser.js"></script>
+    <script src="js/ai/mapper.js"></script>
+    <script src="js/ai/tailor.js"></script>
+
+    <!-- UI Components -->
+    <script src="js/ui/getting-started-modal.js"></script>
+    <script src="js/ui/job-indicator.js"></script>
+    <script src="js/ui/resume-preview.js"></script>
+
+    <!-- Workflow Scripts -->
     <script src="js/ui/workflow-ui.js"></script>
+    <script src="js/workflow/workflow-integration.js"></script>
+
     <script>
+        // Global references
+        let workflowUI = null;
+        let workflowIntegration = null;
+        let gettingStartedModal = null;
+        let jobIndicator = null;
+        let resumePreview = null;
+
         // Theme Management
         function initTheme() {
             const savedTheme = localStorage.getItem('theme');
@@ -437,14 +472,164 @@
         // Initialize theme immediately
         initTheme();
 
-        // Initialize workflow UI
-        document.addEventListener('DOMContentLoaded', function() {
+        // Initialize workflow system
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('[Workflow] Initializing...');
+
+            // Initialize WorkflowUI
             if (typeof WorkflowUI !== 'undefined') {
-                window.workflowUI = new WorkflowUI();
-                window.workflowUI.initialize();
+                workflowUI = new WorkflowUI();
+                window.workflowUI = workflowUI;
+
+                // Override event handlers with backend integration
+                setupBackendIntegration();
+
+                workflowUI.initialize();
                 console.log('[Workflow] UI initialized');
             }
+
+            // Initialize WorkflowIntegration
+            if (typeof WorkflowIntegration !== 'undefined' && workflowUI) {
+                workflowIntegration = new WorkflowIntegration(workflowUI);
+                window.workflowIntegration = workflowIntegration;
+                await workflowIntegration.initialize();
+                console.log('[Workflow] Integration initialized');
+            }
+
+            // Initialize export system
+            if (typeof ExportManager !== 'undefined') {
+                window.exportManager = new ExportManager();
+                await window.exportManager.initialize();
+                console.log('[Workflow] Export system initialized');
+            }
+
+            // Initialize Getting Started Modal
+            if (typeof GettingStartedModal !== 'undefined') {
+                gettingStartedModal = new GettingStartedModal();
+                window.gettingStartedModal = gettingStartedModal;
+                gettingStartedModal.initialize();
+                console.log('[Workflow] Getting Started modal initialized');
+            }
+
+            // Initialize Job Indicator
+            if (typeof JobIndicator !== 'undefined') {
+                jobIndicator = new JobIndicator();
+                window.jobIndicator = jobIndicator;
+                jobIndicator.initialize();
+                console.log('[Workflow] Job indicator initialized');
+            }
+
+            // Initialize Resume Preview (if preview container exists)
+            const previewContainer = document.getElementById('resume-preview');
+            if (previewContainer && typeof ResumePreview !== 'undefined') {
+                resumePreview = new ResumePreview('resume-preview');
+                window.resumePreview = resumePreview;
+                resumePreview.initialize();
+                console.log('[Workflow] Resume preview initialized');
+            }
         });
+
+        // Setup backend integration for all workflow steps
+        function setupBackendIntegration() {
+            // Step 1: Resume upload
+            const resumeFile = document.getElementById('resume-file');
+            if (resumeFile) {
+                resumeFile.addEventListener('change', async (e) => {
+                    if (e.target.files[0] && workflowIntegration) {
+                        try {
+                            await workflowIntegration.handleResumeUpload(e.target.files[0]);
+                        } catch (error) {
+                            console.error('[Workflow] Resume upload error:', error);
+                        }
+                    }
+                });
+            }
+
+            const resumeText = document.getElementById('resume-text');
+            if (resumeText) {
+                resumeText.addEventListener('input', (e) => {
+                    if (workflowIntegration) {
+                        workflowIntegration.handleResumeTextPaste(e.target.value);
+                    }
+                });
+            }
+
+            // Step 2: Analysis
+            // Override the startAnalysis method
+            if (workflowUI) {
+                const originalStartAnalysis = workflowUI.startAnalysis.bind(workflowUI);
+                workflowUI.startAnalysis = async function() {
+                    console.log('[Workflow] Starting analysis with backend integration...');
+                    this.goToNextStep();
+
+                    if (workflowIntegration) {
+                        try {
+                            await workflowIntegration.analyzeResume();
+                        } catch (error) {
+                            console.error('[Workflow] Analysis error:', error);
+                        }
+                    }
+                };
+            }
+
+            // Step 3: Job tailoring
+            const jobUrlInput = document.getElementById('job-url');
+            const importJobBtn = jobUrlInput ? jobUrlInput.nextElementSibling : null;
+
+            if (importJobBtn) {
+                importJobBtn.addEventListener('click', async () => {
+                    const url = jobUrlInput.value.trim();
+                    if (url && workflowIntegration) {
+                        try {
+                            await workflowIntegration.fetchJobFromURL(url);
+                        } catch (error) {
+                            console.error('[Workflow] Job fetch error:', error);
+                        }
+                    }
+                });
+            }
+
+            const jobText = document.getElementById('job-text');
+            if (jobText) {
+                jobText.addEventListener('input', (e) => {
+                    if (workflowIntegration) {
+                        workflowIntegration.handleJobTextPaste(e.target.value);
+                    }
+                });
+            }
+
+            // Override the startTailoring method
+            if (workflowUI) {
+                const originalStartTailoring = workflowUI.startTailoring.bind(workflowUI);
+                workflowUI.startTailoring = async function() {
+                    console.log('[Workflow] Starting tailoring with backend integration...');
+
+                    if (workflowIntegration) {
+                        try {
+                            await workflowIntegration.tailorResume();
+                            this.goToNextStep();
+                        } catch (error) {
+                            console.error('[Workflow] Tailoring error:', error);
+                        }
+                    }
+                };
+            }
+
+            // Step 5: Export
+            const exportButtons = document.querySelectorAll('.btn-export');
+            exportButtons.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const format = btn.dataset.format;
+                    if (workflowIntegration) {
+                        try {
+                            await workflowIntegration.exportDocument(format);
+                        } catch (error) {
+                            console.error('[Workflow] Export error:', error);
+                        }
+                    }
+                });
+            });
+        }
     </script>
 </body>
 </html>

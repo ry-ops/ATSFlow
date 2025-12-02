@@ -22,10 +22,16 @@
 class WorkflowState {
     constructor() {
         /**
-         * Storage key for workflow state
+         * Storage key for workflow state (session data)
          * @private
          */
-        this.STORAGE_KEY = 'resumate_workflow_state';
+        this.SESSION_KEY = 'resumate_session_state';
+
+        /**
+         * Storage key for persistent data (API key only)
+         * @private
+         */
+        this.PERSISTENT_KEY = 'resumate_persistent_data';
 
         /**
          * Current state version for migrations
@@ -446,14 +452,39 @@ class WorkflowState {
     }
 
     /**
-     * Persist state to localStorage
+     * Persist state to sessionStorage and localStorage
+     * Session data (resume, job, analysis) goes to sessionStorage
+     * Persistent data (API key) goes to localStorage
      * @private
      * @returns {boolean} Success status
      */
     persist() {
         try {
-            const serialized = JSON.stringify(this.state);
-            localStorage.setItem(this.STORAGE_KEY, serialized);
+            // Save session data (resume, job, analysis) to sessionStorage
+            const sessionData = {
+                metadata: this.state.metadata,
+                currentStep: this.state.currentStep,
+                steps: this.state.steps,
+                inputs: {
+                    resume: this.state.inputs.resume,
+                    job: this.state.inputs.job
+                },
+                analysis: this.state.analysis,
+                ats: this.state.ats,
+                documents: this.state.documents,
+                validation: this.state.validation,
+                ui: this.state.ui
+            };
+            sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionData));
+
+            // Save persistent data (API key only) to localStorage
+            const persistentData = {
+                apiKey: this.state.inputs.preferences.apiKey,
+                theme: this.state.inputs.preferences.theme,
+                autoSave: this.state.inputs.preferences.autoSave
+            };
+            localStorage.setItem(this.PERSISTENT_KEY, JSON.stringify(persistentData));
+
             return true;
         } catch (error) {
             console.error('[WorkflowState] Failed to persist state:', error);
@@ -462,28 +493,46 @@ class WorkflowState {
     }
 
     /**
-     * Hydrate state from localStorage
+     * Hydrate state from sessionStorage and localStorage
+     * Session data comes from sessionStorage (cleared on browser restart)
+     * Persistent data comes from localStorage (survives browser restart)
      * @private
      * @returns {boolean} Success status
      */
     hydrate() {
         try {
-            const serialized = localStorage.getItem(this.STORAGE_KEY);
-            if (!serialized) {
-                console.log('[WorkflowState] No persisted state found, using defaults');
-                return false;
+            // Load session data from sessionStorage
+            const sessionSerialized = sessionStorage.getItem(this.SESSION_KEY);
+
+            // Load persistent data from localStorage
+            const persistentSerialized = localStorage.getItem(this.PERSISTENT_KEY);
+
+            if (sessionSerialized) {
+                const sessionData = JSON.parse(sessionSerialized);
+
+                // Merge session data into state
+                this.state = {
+                    ...this.state,
+                    ...sessionData
+                };
+
+                console.log('[WorkflowState] Hydrated session state from sessionStorage');
+            } else {
+                console.log('[WorkflowState] No session state found (fresh browser session)');
             }
 
-            const loaded = JSON.parse(serialized);
+            if (persistentSerialized) {
+                const persistentData = JSON.parse(persistentSerialized);
 
-            // Version migration logic here if needed
-            if (loaded.metadata?.version !== this.STATE_VERSION) {
-                console.warn('[WorkflowState] State version mismatch, migrating...');
-                // Perform migration
+                // Merge persistent data (API key) into state
+                this.state.inputs.preferences = {
+                    ...this.state.inputs.preferences,
+                    ...persistentData
+                };
+
+                console.log('[WorkflowState] Hydrated persistent data from localStorage');
             }
 
-            this.state = loaded;
-            console.log('[WorkflowState] Hydrated state from localStorage');
             return true;
         } catch (error) {
             console.error('[WorkflowState] Failed to hydrate state:', error);
@@ -493,14 +542,43 @@ class WorkflowState {
 
     /**
      * Reset state to defaults
+     * Clears session data but preserves API key in localStorage
+     * @param {boolean} keepApiKey - Whether to keep API key (default: true)
      * @returns {boolean} Success status
      */
-    reset() {
+    reset(keepApiKey = true) {
         this.previousState = this.state;
+
+        // Save API key if needed
+        const apiKey = keepApiKey ? this.state.inputs.preferences.apiKey : '';
+
+        // Reset to defaults
         this.state = this.getDefaultState();
+
+        // Restore API key
+        if (keepApiKey && apiKey) {
+            this.state.inputs.preferences.apiKey = apiKey;
+        }
+
+        // Clear session storage
+        sessionStorage.removeItem(this.SESSION_KEY);
+
+        // Persist (will save API key to localStorage if kept)
         this.persist();
+
         this.notifyListeners('reset', { state: this.getState() });
-        console.log('[WorkflowState] State reset to defaults');
+        console.log('[WorkflowState] State reset to defaults (keepApiKey:', keepApiKey, ')');
+        return true;
+    }
+
+    /**
+     * Clear session data only (keeps API key)
+     * This is called on browser restart
+     * @returns {boolean} Success status
+     */
+    clearSession() {
+        sessionStorage.removeItem(this.SESSION_KEY);
+        console.log('[WorkflowState] Cleared session data');
         return true;
     }
 
