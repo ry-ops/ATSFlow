@@ -490,10 +490,13 @@
                 (suggestion) => {
                     console.log('Applied suggestion:', suggestion);
                     showStatus(`Applied: ${suggestion.reason}`, 'success');
+                    updateResumeWithSuggestion(suggestion);
                 },
                 (suggestions) => {
                     console.log('Applied all suggestions:', suggestions);
-                    showStatus(`Applied ${suggestions.length} suggestions`, 'success');
+                    showStatus(`Applied ${suggestions.length} suggestions! Your resume has been optimized.`, 'success');
+                    updateResumeWithSuggestions(suggestions);
+                    scrollToNextSteps();
                 }
             );
         }
@@ -626,6 +629,59 @@ Responsibilities:
             } catch (error) {
                 console.error('[Job Tailor] Initialization error:', error);
             }
+        }
+
+        // Update resume with a single suggestion
+        function updateResumeWithSuggestion(suggestion) {
+            // Apply the suggestion to the resume data
+            const resumeData = document.getElementById('resumeData');
+            if (resumeData && currentSession) {
+                // Update resume text
+                const updatedText = resumeData.value.replace(suggestion.before, suggestion.after);
+                resumeData.value = updatedText;
+
+                // Save to localStorage
+                const lastAnalysis = JSON.parse(localStorage.getItem('lastAnalysis') || '{}');
+                lastAnalysis.resumeText = updatedText;
+                localStorage.setItem('lastAnalysis', JSON.stringify(lastAnalysis));
+
+                console.log('[Job Tailor] Resume updated with suggestion');
+            }
+        }
+
+        // Update resume with multiple suggestions
+        function updateResumeWithSuggestions(suggestions) {
+            const resumeData = document.getElementById('resumeData');
+            if (resumeData && suggestions.length > 0) {
+                let updatedText = resumeData.value;
+
+                // Apply all suggestions
+                suggestions.forEach(suggestion => {
+                    updatedText = updatedText.replace(suggestion.before, suggestion.after);
+                });
+
+                resumeData.value = updatedText;
+
+                // Save to localStorage
+                const lastAnalysis = JSON.parse(localStorage.getItem('lastAnalysis') || '{}');
+                lastAnalysis.resumeText = updatedText;
+                localStorage.setItem('lastAnalysis', JSON.stringify(lastAnalysis));
+
+                console.log('[Job Tailor] Resume updated with all suggestions');
+
+                // Show success message
+                showStatus('✅ Your resume has been optimized! Scroll down to see next steps.', 'success');
+            }
+        }
+
+        // Scroll to "What's Next?" section
+        function scrollToNextSteps() {
+            setTimeout(() => {
+                const nextSteps = document.querySelector('.next-steps-section');
+                if (nextSteps) {
+                    nextSteps.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 500);
         }
 
         // Run initialization when page loads
