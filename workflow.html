@@ -678,11 +678,13 @@
             }
 
             // Initialize export system
-            if (typeof ExportManager !== 'undefined') {
-                window.exportManager = new ExportManager();
-                await window.exportManager.initialize();
-                console.log('[Workflow] Export system initialized');
-            }
+            // Note: ExportManager is for the standalone export.html page
+            // The workflow page has its own export functionality in Step 5
+            // if (typeof ExportManager !== 'undefined') {
+            //     window.exportManager = new ExportManager();
+            //     await window.exportManager.initialize();
+            //     console.log('[Workflow] Export system initialized');
+            // }
 
             // Initialize Getting Started Modal
             if (typeof GettingStartedModal !== 'undefined') {
