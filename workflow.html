@@ -204,7 +204,6 @@
                 <div class="step-content">
                     <!-- Loading State -->
                     <div id="analyze-loading" class="loading-state" style="display: none;">
-                        <div class="spinner"></div>
                         <p>✨ AI is working its magic...</p>
                     </div>
 
@@ -306,6 +305,7 @@
                     <button
                         id="step-3-skip"
                         class="btn-secondary"
+                        style="padding: 1rem 2rem; font-size: 1rem;"
                         aria-label="Skip job tailoring">
                         Skip This Step
                     </button>
@@ -829,6 +829,9 @@
 
                                     // Scroll to top
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                                    // Populate Step 4 editor and preview
+                                    populateStep4EditorAndPreview();
                                 }
                             }, 1500);
                         } catch (error) {
@@ -879,8 +882,106 @@
 
                         // Scroll to top
                         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                        // Populate Step 4 editor and preview
+                        populateStep4EditorAndPreview();
                     }
                 });
+            }
+
+            // Step 4: Populate editor and preview
+            function populateStep4EditorAndPreview() {
+                console.log('[Workflow] Populating Step 4 editor and preview...');
+
+                // Get resume text from workflowIntegration state
+                let resumeText = '';
+                if (workflowIntegration && workflowIntegration.state.resumeText) {
+                    resumeText = workflowIntegration.state.resumeText;
+                } else {
+                    // Fallback to textarea value
+                    const resumeTextArea = document.getElementById('resume-text');
+                    if (resumeTextArea && resumeTextArea.value) {
+                        resumeText = resumeTextArea.value;
+                    }
+                }
+
+                if (!resumeText || resumeText.length < 10) {
+                    console.warn('[Workflow] No resume text available for Step 4');
+                    return;
+                }
+
+                // Populate editor (left panel)
+                const editor = document.getElementById('resume-editor');
+                if (editor) {
+                    // Format resume text as HTML for better display
+                    const formattedText = formatResumeAsHTML(resumeText);
+                    editor.innerHTML = formattedText;
+                    console.log('[Workflow] Editor populated with resume text');
+                }
+
+                // Populate preview (right panel) - use resumePreview instance if available
+                const preview = document.getElementById('resume-preview');
+                if (preview && window.resumePreview) {
+                    window.resumePreview.updatePreview(resumeText);
+                    console.log('[Workflow] Preview populated with formatted resume');
+                } else if (preview) {
+                    // Fallback if resumePreview not initialized
+                    preview.innerHTML = `
+                        <div class="resume-content" style="padding: 2rem; max-width: 800px; margin: 0 auto;">
+                            ${formatResumeAsHTML(resumeText)}
+                        </div>
+                    `;
+                    console.log('[Workflow] Preview populated (fallback method)');
+                }
+            }
+
+            // Helper function to format resume text as HTML
+            function formatResumeAsHTML(text) {
+                if (!text) return '';
+
+                let html = text;
+
+                // Escape HTML special characters
+                html = html.replace(/&/g, '&amp;')
+                           .replace(/</g, '&lt;')
+                           .replace(/>/g, '&gt;');
+
+                // Headers (lines in ALL CAPS or starting with #)
+                html = html.replace(/^([A-Z\s]{3,})$/gm, '<h2 style="color: var(--text-color); font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">$1</h2>');
+                html = html.replace(/^#{1}\s+(.+)$/gm, '<h1 style="color: var(--text-color); font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem;">$1</h1>');
+                html = html.replace(/^#{2}\s+(.+)$/gm, '<h2 style="color: var(--text-color); font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.75rem;">$1</h2>');
+                html = html.replace(/^#{3}\s+(.+)$/gm, '<h3 style="color: var(--text-color); font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem;">$1</h3>');
+
+                // Bold (**text** or __text__)
+                html = html.replace(/\*\*(.+?)\*\*/g, '<strong style="color: var(--text-color);">$1</strong>');
+                html = html.replace(/__(.+?)__/g, '<strong style="color: var(--text-color);">$1</strong>');
+
+                // Italic (*text* or _text_)
+                html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+                html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+
+                // Links
+                html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" style="color: var(--primary-color); text-decoration: underline;">$1</a>');
+
+                // Email addresses
+                html = html.replace(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi, '<a href="mailto:$1" style="color: var(--primary-color);">$1</a>');
+
+                // Phone numbers
+                html = html.replace(/(\d{3}[-.]?\d{3}[-.]?\d{4})/g, '<strong style="color: var(--text-color);">$1</strong>');
+
+                // Bullet lists (-, *, •)
+                html = html.replace(/^[\-\*•]\s+(.+)$/gm, '<li style="margin: 0.25rem 0; color: var(--text-color);">$1</li>');
+                html = html.replace(/(<li[^>]*>.*<\/li>\n?)+/g, '<ul style="margin: 0.5rem 0; padding-left: 1.5rem; color: var(--text-color);">$&</ul>');
+
+                // Line breaks to paragraphs
+                html = html.split('\n\n').map(para => {
+                    if (!para.match(/^<[h|u]/)) {
+                        return `<p style="margin: 0.5rem 0; color: var(--text-color); line-height: 1.6;">${para.replace(/\n/g, '<br>')}</p>`;
+                    }
+                    return para;
+                }).join('\n');
+
+                return html;
             }
 
             // Step 2: Analysis
