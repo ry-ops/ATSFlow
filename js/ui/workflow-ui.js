@@ -7,7 +7,7 @@
 class WorkflowUI {
   constructor() {
     this.currentStep = 1;
-    this.totalSteps = 5;
+    this.totalSteps = 6;
     this.stepData = {};
     this.animationDuration = 500; // ms
 
@@ -42,7 +42,13 @@ class WorkflowUI {
         id: 'step-export',
         number: 5,
         name: 'Export',
-        finishBtn: 'step-5-finish'
+        continueBtn: 'step-5-continue'
+      },
+      {
+        id: 'step-additional',
+        number: 6,
+        name: 'More',
+        continueBtn: 'step-6-continue'
       }
     ];
   }
