@@ -23,12 +23,6 @@
 
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a href="index.html" class="nav-link">
-                        <span class="nav-link-icon">🏠</span>
-                        Home
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="workflow.html" class="nav-link active">
                         <span class="nav-link-icon">✨</span>
                         Resume Builder
@@ -98,6 +92,16 @@
                     disabled>
                     <span class="progress-number">5</span>
                     <span class="progress-label">Export</span>
+                </button>
+                <div class="progress-connector"></div>
+
+                <button
+                    class="progress-dot locked"
+                    data-step="6"
+                    aria-label="Step 6: Additional Documents (locked)"
+                    disabled>
+                    <span class="progress-number">6</span>
+                    <span class="progress-label">More</span>
                 </button>
             </div>
         </div>
@@ -441,10 +445,100 @@
                         Back
                     </button>
                     <button
-                        id="step-5-finish"
+                        id="step-5-continue"
+                        class="btn-primary btn-continue"
+                        aria-label="Continue to additional documents">
+                        Continue
+                        <span class="btn-icon">→</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Step 6: Additional Documents -->
+            <section id="step-additional" class="workflow-step locked" aria-labelledby="step-additional-title" aria-hidden="true">
+                <div class="step-header">
+                    <h1 id="step-additional-title" class="step-title">
+                        <span class="step-icon">📝</span>
+                        Additional Career Documents
+                    </h1>
+                    <p class="step-description">
+                        Generate complementary documents to strengthen your job application.
+                    </p>
+                </div>
+
+                <div class="step-content">
+                    <div class="document-options" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                        <!-- Cover Letter -->
+                        <div class="document-card" style="background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s;">
+                            <div class="document-icon" style="font-size: 3rem; margin-bottom: 1rem;">✉️</div>
+                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem;">Cover Letter</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6;">
+                                Generate a tailored cover letter that matches your resume and the job description.
+                            </p>
+                            <button class="btn-primary" id="generate-cover-letter" style="width: 100%;">
+                                Generate Cover Letter
+                            </button>
+                        </div>
+
+                        <!-- Executive Brand Statement -->
+                        <div class="document-card" style="background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s;">
+                            <div class="document-icon" style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
+                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem;">Executive Brand Statement</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6;">
+                                Create a powerful 2-3 paragraph professional brand statement for LinkedIn and networking.
+                            </p>
+                            <button class="btn-primary" id="generate-brand-statement" style="width: 100%;">
+                                Generate Brand Statement
+                            </button>
+                        </div>
+
+                        <!-- LinkedIn Optimization -->
+                        <div class="document-card" style="background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 2px solid var(--border-color); transition: all 0.3s;">
+                            <div class="document-icon" style="font-size: 3rem; margin-bottom: 1rem;">🔗</div>
+                            <h3 style="color: var(--text-color); margin-bottom: 0.5rem;">LinkedIn Headline & Summary</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6;">
+                                Optimize your LinkedIn profile with a compelling headline and summary.
+                            </p>
+                            <button class="btn-primary" id="generate-linkedin" style="width: 100%;">
+                                Generate LinkedIn Content
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Generated content will appear here -->
+                    <div id="generated-content" class="card" style="display: none; margin-top: 2rem; background: var(--card-bg);">
+                        <h3 style="color: var(--text-color); margin-bottom: 1rem;">Generated Document</h3>
+                        <div id="generated-text" style="color: var(--text-color); white-space: pre-wrap; line-height: 1.8; padding: 1.5rem; background: var(--bg-color); border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                            <!-- Content will be inserted here -->
+                        </div>
+                        <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                            <button class="btn-primary" id="copy-generated">
+                                📋 Copy to Clipboard
+                            </button>
+                            <button class="btn-secondary" id="download-generated">
+                                📥 Download
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="additional-loading" class="loading-state" style="display: none; text-align: center; padding: 3rem;">
+                        <p style="color: var(--text-color); font-size: 1.125rem;">✨ AI is crafting your document...</p>
+                    </div>
+                </div>
+
+                <div class="step-actions">
+                    <button
+                        class="btn-secondary btn-back"
+                        aria-label="Go back to export step">
+                        <span class="btn-icon">←</span>
+                        Back
+                    </button>
+                    <button
+                        id="step-6-finish"
                         class="btn-primary"
-                        aria-label="Start a new resume">
-                        Start New Resume
+                        aria-label="Finish and start new">
+                        Finish & Start New
                     </button>
                 </div>
             </section>
@@ -1080,10 +1174,222 @@
                             dot5.setAttribute('aria-current', 'step');
                         }
 
-                        // Scroll to top
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        // Scroll to top with smooth fade
+                        smoothStepTransition(step4, step5);
                     }
                 });
+            }
+
+            // Step 5 Continue button (to Additional Documents)
+            const step5ContinueBtn = document.getElementById('step-5-continue');
+            if (step5ContinueBtn) {
+                step5ContinueBtn.addEventListener('click', () => {
+                    console.log('[Workflow] Step 5 Continue (to Additional Documents) clicked');
+
+                    const step5 = document.getElementById('step-export');
+                    const step6 = document.getElementById('step-additional');
+
+                    if (step5 && step6) {
+                        step5.classList.remove('active');
+                        step5.classList.add('locked');
+                        step5.setAttribute('aria-hidden', 'true');
+
+                        step6.classList.remove('locked');
+                        step6.classList.add('active');
+                        step6.removeAttribute('aria-hidden');
+
+                        // Update progress dots
+                        const dot5 = document.querySelector('[data-step="5"]');
+                        const dot6 = document.querySelector('[data-step="6"]');
+                        if (dot5) {
+                            dot5.classList.remove('active');
+                            dot5.classList.add('completed');
+                        }
+                        if (dot6) {
+                            dot6.classList.remove('locked');
+                            dot6.classList.add('active');
+                            dot6.setAttribute('aria-current', 'step');
+                        }
+
+                        // Scroll to top with smooth fade
+                        smoothStepTransition(step5, step6);
+                    }
+                });
+            }
+
+            // Step 6: Document generation handlers
+            const generateCoverLetterBtn = document.getElementById('generate-cover-letter');
+            const generateBrandStatementBtn = document.getElementById('generate-brand-statement');
+            const generateLinkedInBtn = document.getElementById('generate-linkedin');
+
+            if (generateCoverLetterBtn) {
+                generateCoverLetterBtn.addEventListener('click', () => generateDocument('cover-letter'));
+            }
+            if (generateBrandStatementBtn) {
+                generateBrandStatementBtn.addEventListener('click', () => generateDocument('brand-statement'));
+            }
+            if (generateLinkedInBtn) {
+                generateLinkedInBtn.addEventListener('click', () => generateDocument('linkedin'));
+            }
+
+            // Generate document function
+            async function generateDocument(type) {
+                console.log('[Workflow] Generating document:', type);
+
+                const loadingDiv = document.getElementById('additional-loading');
+                const contentDiv = document.getElementById('generated-content');
+                const textDiv = document.getElementById('generated-text');
+
+                // Show loading
+                if (loadingDiv) loadingDiv.style.display = 'block';
+                if (contentDiv) contentDiv.style.display = 'none';
+
+                try {
+                    const resumeText = workflowIntegration?.state.resumeText || '';
+                    const jobDescription = workflowIntegration?.state.jobDescription || '';
+
+                    if (!resumeText) {
+                        throw new Error('No resume found. Please complete the resume workflow first.');
+                    }
+
+                    const apiKey = workflowIntegration?.getApiKey();
+                    if (!apiKey && !workflowIntegration?.serverHasKey) {
+                        throw new Error('No API key available. Please configure an API key.');
+                    }
+
+                    // Call generate API
+                    const response = await fetch('/api/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            prompt: getDocumentPrompt(type, resumeText, jobDescription),
+                            apiKey: apiKey || undefined
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Generation failed');
+                    }
+
+                    const result = await response.json();
+                    const generatedText = result.content || result.text || '';
+
+                    // Display result
+                    if (textDiv) textDiv.textContent = generatedText;
+                    if (loadingDiv) loadingDiv.style.display = 'none';
+                    if (contentDiv) {
+                        contentDiv.style.display = 'block';
+                        contentDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+
+                    // Store for copy/download
+                    window.lastGeneratedDocument = { type, content: generatedText };
+
+                } catch (error) {
+                    console.error('[Workflow] Document generation error:', error);
+                    alert('Generation failed: ' + error.message);
+                    if (loadingDiv) loadingDiv.style.display = 'none';
+                }
+            }
+
+            // Get document prompt based on type
+            function getDocumentPrompt(type, resumeText, jobDescription) {
+                const prompts = {
+                    'cover-letter': `Based on the following resume and job description, create a professional, compelling cover letter that highlights relevant experience and skills. The letter should be 3-4 paragraphs, personable yet professional.
+
+Resume:
+${resumeText}
+
+Job Description:
+${jobDescription || 'General position'}
+
+Create a tailored cover letter that makes a strong case for why this candidate is perfect for the role.`,
+
+                    'brand-statement': `Based on the following resume, create a powerful executive brand statement (2-3 paragraphs) that captures the professional's unique value proposition, key achievements, and leadership style. This should be suitable for LinkedIn "About" section and networking.
+
+Resume:
+${resumeText}
+
+Create a compelling professional brand statement.`,
+
+                    'linkedin': `Based on the following resume, create:
+1. A compelling LinkedIn headline (120 characters max)
+2. A professional LinkedIn summary (3-4 paragraphs)
+
+The content should highlight key achievements, skills, and professional identity.
+
+Resume:
+${resumeText}
+
+Create optimized LinkedIn content.`
+                };
+
+                return prompts[type] || prompts['cover-letter'];
+            }
+
+            // Copy to clipboard
+            const copyBtn = document.getElementById('copy-generated');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    const text = document.getElementById('generated-text')?.textContent;
+                    if (text) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            copyBtn.textContent = '✅ Copied!';
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '📋 Copy to Clipboard';
+                            }, 2000);
+                        });
+                    }
+                });
+            }
+
+            // Download document
+            const downloadBtn = document.getElementById('download-generated');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', () => {
+                    const doc = window.lastGeneratedDocument;
+                    if (doc && doc.content) {
+                        const blob = new Blob([doc.content], { type: 'text/plain' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${doc.type}-${Date.now()}.txt`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    }
+                });
+            }
+
+            // Step 6 Finish button
+            const step6FinishBtn = document.getElementById('step-6-finish');
+            if (step6FinishBtn) {
+                step6FinishBtn.addEventListener('click', () => {
+                    if (confirm('Start a new resume? This will clear all current data.')) {
+                        location.reload();
+                    }
+                });
+            }
+
+            // Smooth step transition with fade
+            function smoothStepTransition(fromStep, toStep) {
+                // Fade out current step
+                fromStep.style.opacity = '1';
+                fromStep.style.transition = 'opacity 0.3s ease-out';
+                fromStep.style.opacity = '0';
+
+                setTimeout(() => {
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'auto' });
+
+                    // Fade in new step
+                    toStep.style.opacity = '0';
+                    toStep.style.transition = 'opacity 0.3s ease-in';
+
+                    setTimeout(() => {
+                        toStep.style.opacity = '1';
+                    }, 50);
+                }, 300);
             }
 
             // Step 2: Analysis
