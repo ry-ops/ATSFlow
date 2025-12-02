@@ -153,6 +153,12 @@
               Letter Templates
             </a>
           </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-careerdocs.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">📋</span>
+              Career Documents
+            </a>
+          </li>
           <li class="nav-dropdown-divider" role="separator"></li>
           <li class="nav-dropdown-item" role="none">
             <a href="/test-tracker.html" class="nav-dropdown-link" role="menuitem">
@@ -174,6 +180,12 @@
 
     <!-- Quick Actions -->
     <div class="navbar-actions">
+      <!-- Theme Toggle -->
+      <button class="nav-theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">
+        <span class="theme-icon-moon">🌙</span>
+        <span class="theme-icon-sun">☀️</span>
+      </button>
+
       <button class="nav-action-btn" type="button" onclick="window.location.href='/builder.html'" aria-label="Create new resume">
         <span aria-hidden="true">+</span>
         New Resume
@@ -256,6 +268,15 @@
           </div>
         </a>
       </li>
+      <li class="shortcuts-item">
+        <a href="/test-careerdocs.html" class="shortcuts-link" role="menuitem">
+          <span class="shortcuts-icon" aria-hidden="true">📋</span>
+          <div class="shortcuts-content">
+            <h4 class="shortcuts-title">Career Documents</h4>
+            <p class="shortcuts-description">Bios, inquiry letters, brand statements</p>
+          </div>
+        </a>
+      </li>
     </ul>
   </div>
 </div>
@@ -265,6 +286,32 @@
 
 <!-- Legacy inline script for backwards compatibility (will be removed once module is confirmed working) -->
 <script>
+  // Theme Management
+  function initTheme() {
+    // Check for saved theme preference, system preference, or default to light
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+  }
+
+  // Initialize theme immediately to prevent flash
+  initTheme();
+
+  // Listen for system theme changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+    }
+  });
+
   // Fallback: Basic mobile navigation toggle
   document.addEventListener('DOMContentLoaded', function() {
     const toggle = document.querySelector('.navbar-toggle');

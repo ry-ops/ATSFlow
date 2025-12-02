@@ -4,11 +4,16 @@
     "default-src": ["'self'"],
     "script-src": [
       "'self'",
-      "'unsafe-inline'"
+      "'unsafe-inline'",
+      "https://cdnjs.cloudflare.com",
+      "https://cdn.jsdelivr.net",
+      "https://unpkg.com"
     ],
     "style-src": [
       "'self'",
-      "'unsafe-inline'"
+      "'unsafe-inline'",
+      "https://cdnjs.cloudflare.com",
+      "https://cdn.jsdelivr.net"
     ],
     "img-src": [
       "'self'",
@@ -17,7 +22,9 @@
     ],
     "font-src": [
       "'self'",
-      "data:"
+      "data:",
+      "https://cdnjs.cloudflare.com",
+      "https://cdn.jsdelivr.net"
     ],
     "connect-src": [
       "'self'",
@@ -28,8 +35,7 @@
     "base-uri": ["'self'"],
     "form-action": ["'self'"],
     "frame-ancestors": ["'none'"],
-    "block-all-mixed-content": [],
-    "upgrade-insecure-requests": []
+    "block-all-mixed-content": []
   },
   "reportOnly": false,
   "reportUri": null,

@@ -24,7 +24,7 @@
                 <div class="editor-panel">
                     <!-- Resume Input Section -->
                     <section class="card">
-                        <h2>📄 Your Resume</h2>
+                        <h2>📄 Your Resume <span class="tooltip-trigger" data-tooltip="resume-summary">?</span></h2>
                         <div class="input-group">
                             <label for="resume-file" class="file-upload-label">
                                 <span class="upload-icon">📎</span>
@@ -60,7 +60,7 @@
 
                     <!-- API Key Section -->
                     <section class="card">
-                        <h2>🔑 Claude AI API Key</h2>
+                        <h2>🔑 Claude AI API Key <span class="tooltip-trigger" data-tooltip="api-key">?</span></h2>
                         <div class="input-group">
                             <input
                                 type="password"
@@ -145,8 +145,12 @@
 
     <!-- Export Libraries (CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <!-- Utilities -->
+    <script src="js/utils/tooltips.js"></script>
+    <script src="js/utils/onboarding.js"></script>
 
     <!-- Export Modules -->
     <script src="js/export/pdf-export.js"></script>
@@ -197,6 +201,31 @@
                 window.print();
             }
         }
+
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Initialize theme immediately
+        initTheme();
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            }
+        });
     </script>
     <script src="js/navigation/loader.js"></script>
 </body>

@@ -22,12 +22,32 @@ async function handleResumeUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    const textarea = document.getElementById('resume-text');
+
     try {
-        const text = await readFileAsText(file);
+        // Show loading indicator
+        textarea.value = 'Parsing resume...';
+        textarea.disabled = true;
+
+        // Check file type - PDFs and DOCXs need server-side parsing
+        const fileName = file.name.toLowerCase();
+        let text;
+
+        if (fileName.endsWith('.pdf') || fileName.endsWith('.docx') || fileName.endsWith('.doc')) {
+            // Use server-side parsing for PDFs and Word docs
+            text = await parseFileOnServer(file);
+        } else {
+            // Read plain text files directly
+            text = await readFileAsText(file);
+        }
+
         state.resumeText = text;
-        document.getElementById('resume-text').value = text;
+        textarea.value = text;
+        textarea.disabled = false;
         updateAnalyzeButton();
     } catch (error) {
+        textarea.value = '';
+        textarea.disabled = false;
         alert('Error reading file: ' + error.message);
     }
 }
@@ -37,12 +57,32 @@ async function handleJobUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    const textarea = document.getElementById('job-text');
+
     try {
-        const text = await readFileAsText(file);
+        // Show loading indicator
+        textarea.value = 'Parsing job description...';
+        textarea.disabled = true;
+
+        // Check file type - PDFs and DOCXs need server-side parsing
+        const fileName = file.name.toLowerCase();
+        let text;
+
+        if (fileName.endsWith('.pdf') || fileName.endsWith('.docx') || fileName.endsWith('.doc')) {
+            // Use server-side parsing for PDFs and Word docs
+            text = await parseFileOnServer(file);
+        } else {
+            // Read plain text files directly
+            text = await readFileAsText(file);
+        }
+
         state.jobText = text;
-        document.getElementById('job-text').value = text;
+        textarea.value = text;
+        textarea.disabled = false;
         updateAnalyzeButton();
     } catch (error) {
+        textarea.value = '';
+        textarea.disabled = false;
         alert('Error reading file: ' + error.message);
     }
 }
@@ -84,6 +124,31 @@ function readFileAsText(file) {
         reader.onerror = reject;
         reader.readAsText(file);
     });
+}
+
+// Parse PDF/DOCX file on server
+async function parseFileOnServer(file) {
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    const response = await fetch('/api/parse', {
+        method: 'POST',
+        body: formData
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to parse file');
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+        throw new Error(result.error || 'Failed to parse file');
+    }
+
+    // Return the extracted text
+    return result.text || '';
 }
 
 // Analyze resume with Claude AI
