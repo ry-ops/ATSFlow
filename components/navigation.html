@@ -1,6 +1,9 @@
 <!-- ResuMate Unified Navigation Bar -->
 <!-- Include this component in all pages -->
 
+<!-- Live region for screen reader announcements -->
+<div id="nav-announcements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
 <nav class="resumate-navbar" role="navigation" aria-label="Main navigation">
   <!-- Skip to main content (accessibility) -->
   <a href="#main-content" class="skip-to-main">Skip to main content</a>
@@ -13,15 +16,21 @@
     </a>
 
     <!-- Mobile Toggle -->
-    <button class="navbar-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navbar-menu">
-      ☰
+    <button class="navbar-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navbar-menu">
+      <span aria-hidden="true">☰</span>
     </button>
 
     <!-- Navigation Links -->
     <ul class="navbar-nav" id="navbar-menu" role="menubar">
+      <!-- Mobile Close Button -->
+      <li class="nav-mobile-close" role="none">
+        <button class="nav-close-btn" type="button" aria-label="Close navigation menu">
+          <span aria-hidden="true">✕</span>
+        </button>
+      </li>
       <!-- Core Features -->
       <li class="nav-item nav-dropdown" role="none">
-        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" role="menuitem">
+        <button class="nav-dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false" role="menuitem">
           <span class="nav-link-icon" aria-hidden="true">📝</span>
           <span>Build</span>
           <span aria-hidden="true">▾</span>
@@ -50,7 +59,7 @@
 
       <!-- AI Features -->
       <li class="nav-item nav-dropdown" role="none">
-        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" role="menuitem">
+        <button class="nav-dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false" role="menuitem">
           <span class="nav-link-icon" aria-hidden="true">🤖</span>
           <span>AI Tools</span>
           <span aria-hidden="true">▾</span>
@@ -85,7 +94,7 @@
 
       <!-- Optimization -->
       <li class="nav-item nav-dropdown" role="none">
-        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" role="menuitem">
+        <button class="nav-dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false" role="menuitem">
           <span class="nav-link-icon" aria-hidden="true">📊</span>
           <span>Optimize</span>
           <span aria-hidden="true">▾</span>
@@ -95,6 +104,12 @@
             <a href="/test-ats-scanner.html" class="nav-dropdown-link" role="menuitem">
               <span aria-hidden="true">🔍</span>
               ATS Scanner
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/benchmarking.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">📏</span>
+              Benchmarking
             </a>
           </li>
           <li class="nav-dropdown-item" role="none">
@@ -114,7 +129,7 @@
 
       <!-- Export & Applications -->
       <li class="nav-item nav-dropdown" role="none">
-        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" role="menuitem">
+        <button class="nav-dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false" role="menuitem">
           <span class="nav-link-icon" aria-hidden="true">📤</span>
           <span>Export</span>
           <span aria-hidden="true">▾</span>
@@ -147,17 +162,28 @@
           </li>
         </ul>
       </li>
+
+      <!-- Analytics -->
+      <li class="nav-item" role="none">
+        <a href="/analytics-dashboard.html" class="nav-link" role="menuitem">
+          <span class="nav-link-icon" aria-hidden="true">📈</span>
+          <span>Analytics</span>
+        </a>
+      </li>
     </ul>
 
     <!-- Quick Actions -->
     <div class="navbar-actions">
-      <button class="nav-action-btn" onclick="window.location.href='/builder.html'" aria-label="Create new resume">
+      <button class="nav-action-btn" type="button" onclick="window.location.href='/builder.html'" aria-label="Create new resume">
         <span aria-hidden="true">+</span>
         New Resume
       </button>
     </div>
   </div>
 </nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="navbar-overlay" aria-hidden="true"></div>
 
 <!-- Breadcrumbs (optional - add to pages that need context) -->
 <!--
@@ -176,8 +202,8 @@
 
 <!-- Feature Shortcuts (Quick Access Menu) -->
 <div class="feature-shortcuts">
-  <button class="shortcuts-toggle" aria-label="Toggle quick access menu" aria-expanded="false" aria-controls="shortcuts-menu">
-    ⚡
+  <button class="shortcuts-toggle" type="button" aria-label="Toggle quick access menu" aria-expanded="false" aria-controls="shortcuts-menu">
+    <span aria-hidden="true">⚡</span>
   </button>
 
   <div class="shortcuts-menu" id="shortcuts-menu" role="menu" aria-label="Quick access menu">
@@ -234,19 +260,47 @@
   </div>
 </div>
 
-<!-- Navigation JavaScript -->
+<!-- Navigation JavaScript Module -->
+<script type="module" src="/js/navigation/index.js"></script>
+
+<!-- Legacy inline script for backwards compatibility (will be removed once module is confirmed working) -->
 <script>
-  // Mobile navigation toggle
+  // Fallback: Basic mobile navigation toggle
   document.addEventListener('DOMContentLoaded', function() {
     const toggle = document.querySelector('.navbar-toggle');
     const nav = document.querySelector('.navbar-nav');
+    const overlay = document.querySelector('.navbar-overlay');
+    const closeBtn = document.querySelector('.nav-close-btn');
 
     if (toggle && nav) {
       toggle.addEventListener('click', function() {
         nav.classList.toggle('mobile-open');
         const isOpen = nav.classList.contains('mobile-open');
         toggle.setAttribute('aria-expanded', isOpen);
+        if (overlay) {
+          overlay.setAttribute('aria-hidden', !isOpen);
+        }
       });
+
+      // Close button
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          nav.classList.remove('mobile-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          if (overlay) {
+            overlay.setAttribute('aria-hidden', 'true');
+          }
+        });
+      }
+
+      // Overlay click to close
+      if (overlay) {
+        overlay.addEventListener('click', function() {
+          nav.classList.remove('mobile-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          overlay.setAttribute('aria-hidden', 'true');
+        });
+      }
     }
 
     // Feature shortcuts toggle
@@ -269,15 +323,22 @@
       });
     }
 
-    // Highlight active page
+    // Highlight active page with aria-current support
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     document.querySelectorAll('.nav-link, .nav-dropdown-link').forEach(link => {
-      if (link.getAttribute('href') === `/${currentPage}` || link.getAttribute('href') === currentPage) {
+      const href = link.getAttribute('href');
+      if (href === `/${currentPage}` || href === currentPage || href === window.location.pathname) {
         link.classList.add('active');
+        // Add aria-current for accessibility
+        link.setAttribute('aria-current', 'page');
+
         // Also mark parent dropdown as active
         const dropdown = link.closest('.nav-dropdown');
         if (dropdown) {
-          dropdown.querySelector('.nav-dropdown-toggle')?.classList.add('active');
+          const dropdownToggle = dropdown.querySelector('.nav-dropdown-toggle');
+          if (dropdownToggle) {
+            dropdownToggle.classList.add('active');
+          }
         }
       }
     });

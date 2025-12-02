@@ -554,17 +554,25 @@
   left: 0;
   background: var(--color-primary);
   color: var(--color-text-inverse);
-  padding: var(--spacing-3) var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-6);
   text-decoration: none;
-  border-radius: 0 0 var(--radius-base) 0;
-  z-index: var(--z-index-modal);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
+  border-radius: 0 0 var(--radius-md) 0;
+  z-index: calc(var(--z-index-modal) + 1);
   transition: var(--transition-all);
+  /* Enhanced contrast for WCAG AA */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 .skip-to-main:focus {
   top: 0;
-  outline: none;
-  box-shadow: var(--focus-ring-shadow);
+  outline: 3px solid var(--color-text-inverse);
+  outline-offset: 3px;
+  /* High contrast focus ring (minimum 3:1 contrast) */
+  box-shadow: 0 0 0 3px var(--color-primary),
+              0 0 0 6px rgba(255, 255, 255, 0.9),
+              0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 /* Screen reader only text */
@@ -580,12 +588,194 @@
   border-width: 0;
 }
 
-/* Focus visible for keyboard navigation */
+/* Enhanced Focus Indicators - Keyboard-only focus with 3:1 minimum contrast */
 .nav-link:focus-visible,
 .nav-dropdown-link:focus-visible,
-.shortcuts-link:focus-visible {
-  outline: 2px solid var(--focus-ring-color);
+.shortcuts-link:focus-visible,
+.breadcrumb-link:focus-visible {
+  outline: 3px solid var(--color-primary);
   outline-offset: 2px;
+  /* Ensure minimum 3:1 contrast with background */
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.nav-dropdown-toggle:focus-visible,
+.shortcuts-toggle:focus-visible,
+.navbar-toggle:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.nav-action-btn:focus-visible {
+  outline: 3px solid var(--color-text-inverse);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--color-primary-dark),
+              0 0 0 6px rgba(255, 255, 255, 0.9);
+}
+
+/* Mobile Menu Close Button */
+.mobile-menu-close {
+  display: none;
+  position: absolute;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-border-medium);
+  border-radius: var(--radius-base);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: var(--transition-all);
+  z-index: calc(var(--z-index-modal) + 1);
+  /* Ensure 44x44px touch target */
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.mobile-menu-close:hover {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  transform: scale(1.05);
+}
+
+.mobile-menu-close:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.mobile-menu-close:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .navbar-nav.mobile-open .mobile-menu-close {
+    display: flex;
+  }
+}
+
+/* Ensure minimum touch target sizes (44x44px) */
+.nav-link,
+.nav-dropdown-toggle,
+.shortcuts-link,
+.breadcrumb-link {
+  /* Minimum touch target area */
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-toggle,
+.shortcuts-toggle {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Adequate spacing between touch targets */
+.navbar-nav {
+  gap: var(--spacing-2);
+}
+
+.shortcuts-list {
+  gap: var(--spacing-2);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .nav-dropdown-menu,
+  .shortcuts-menu {
+    transition: opacity 0.01ms, visibility 0.01ms;
+    transform: none !important;
+  }
+
+  .navbar-nav {
+    transition: transform 0.01ms;
+  }
+
+  .navbar-actions {
+    transition: transform 0.01ms;
+  }
+
+  .nav-action-btn:hover,
+  .shortcuts-toggle:hover,
+  .mobile-menu-close:hover {
+    transform: none;
+  }
+
+  .spinner {
+    animation: none;
+    border-top-color: var(--color-primary);
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: more) {
+  .nav-link,
+  .nav-dropdown-link,
+  .shortcuts-link,
+  .breadcrumb-link {
+    border: 2px solid transparent;
+  }
+
+  .nav-link:hover,
+  .nav-dropdown-link:hover,
+  .shortcuts-link:hover {
+    border-color: var(--color-primary);
+  }
+
+  .nav-link.active {
+    border-color: var(--color-primary);
+    background: var(--color-primary-bg);
+  }
+
+  .navbar-toggle,
+  .shortcuts-toggle,
+  .mobile-menu-close {
+    border-width: 2px;
+  }
+
+  .nav-action-btn {
+    border: 2px solid var(--color-primary-dark);
+  }
+
+  .nav-action-btn-secondary {
+    border-width: 2px;
+    border-color: var(--color-text-primary);
+  }
+
+  /* Ensure dividers are visible */
+  .nav-dropdown-divider,
+  .breadcrumbs {
+    border-width: 2px;
+  }
+
+  /* High contrast focus indicators */
+  .nav-link:focus-visible,
+  .nav-dropdown-link:focus-visible,
+  .shortcuts-link:focus-visible,
+  .breadcrumb-link:focus-visible,
+  .nav-dropdown-toggle:focus-visible,
+  .shortcuts-toggle:focus-visible,
+  .navbar-toggle:focus-visible {
+    outline-width: 4px;
+    outline-offset: 3px;
+  }
 }
 
 /* ========== Print Styles ========== */

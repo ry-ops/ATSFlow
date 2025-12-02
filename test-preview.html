@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ResuMate Preview System Test</title>
+    <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="css/preview.css">
     <style>
@@ -29,7 +30,7 @@
         }
     </style>
 </head>
-<body>
+<body id="main-content" tabindex="-1">
     <div class="test-controls">
         <h2>Preview System Test</h2>
         <button onclick="loadSampleResume()">Load Sample Resume</button>
@@ -420,5 +421,6 @@
             alert(`Performance Test Complete\n\nAvg: ${avgTime.toFixed(2)}ms\nMin: ${minTime.toFixed(2)}ms\nMax: ${maxTime.toFixed(2)}ms\n\nTarget <500ms: ${avgTime < 500 ? 'PASS' : 'FAIL'}`);
         }
     </script>
+    <script src="js/navigation/index.js"></script>
 </body>
 </html>
