@@ -32,7 +32,7 @@ async function parseResume(fileBuffer, filename, apiKey, options = {}) {
             };
         }
 
-        console.log(`Parsing ${fileType} file: ${filename}`);
+        if (typeof logger !== 'undefined') logger.info(`Parsing ${fileType} file: ${filename}`);
 
         // Route to appropriate parser
         let parseResult;
@@ -81,7 +81,7 @@ async function parseResume(fileBuffer, filename, apiKey, options = {}) {
 
         // If AI extraction is requested and API key is provided
         if (useAI && apiKey && parseResult.text) {
-            console.log('Using AI to extract structured data...');
+            if (typeof logger !== 'undefined') logger.info('Using AI to extract structured data...');
 
             // Extract structured data using AI
             const aiResult = await aiExtractor.extractResumeData(parseResult.text, apiKey);
@@ -90,7 +90,7 @@ async function parseResume(fileBuffer, filename, apiKey, options = {}) {
                 result.structuredData = aiResult.data;
                 result.aiExtracted = true;
             } else {
-                console.warn('AI extraction failed:', aiResult.error);
+                if (typeof logger !== 'undefined') logger.warn('AI extraction failed:', aiResult.error);
                 result.aiError = aiResult.error;
                 result.aiExtracted = false;
             }
@@ -116,7 +116,7 @@ async function parseResume(fileBuffer, filename, apiKey, options = {}) {
         return result;
 
     } catch (error) {
-        console.error('Resume parsing error:', error);
+        if (typeof logger !== 'undefined') logger.error('Resume parsing error:', error);
         return {
             success: false,
             error: error.message,

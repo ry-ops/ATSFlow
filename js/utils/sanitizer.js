@@ -49,7 +49,7 @@ class InputSanitizer {
 
         // Truncate if too long
         if (html.length > this.MAX_TEXT_LENGTH) {
-            console.warn('[Security] Input truncated due to length limit');
+            if (typeof logger !== 'undefined') logger.warn('[Security] Input truncated due to length limit');
             html = html.substring(0, this.MAX_TEXT_LENGTH);
         }
 
@@ -439,4 +439,4 @@ class InputSanitizer {
 const inputSanitizer = new InputSanitizer();
 
 // Log security initialization
-console.log('[Security] Input sanitizer initialized');
+if (typeof logger !== 'undefined') logger.info('[Security] Input sanitizer initialized');

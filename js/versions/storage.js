@@ -18,7 +18,7 @@ class VersionStorage {
             const data = localStorage.getItem(this.storageKey);
             return data ? JSON.parse(data) : [];
         } catch (error) {
-            console.error('Failed to load versions:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load versions:', error);
             return [];
         }
     }
@@ -139,7 +139,7 @@ class VersionStorage {
 
             return version;
         } catch (error) {
-            console.error('Failed to save version:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to save version:', error);
             throw error;
         }
     }
@@ -163,7 +163,7 @@ class VersionStorage {
 
             return true;
         } catch (error) {
-            console.error('Failed to delete version:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to delete version:', error);
             return false;
         }
     }
@@ -186,7 +186,7 @@ class VersionStorage {
 
             return beforeCount - filtered.length;
         } catch (error) {
-            console.error('Failed to delete tailored versions:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to delete tailored versions:', error);
             return 0;
         }
     }
@@ -304,7 +304,7 @@ class VersionStorage {
         try {
             localStorage.setItem(this.metadataKey, JSON.stringify(metadata));
         } catch (error) {
-            console.error('Failed to update metadata:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to update metadata:', error);
         }
     }
 
@@ -317,7 +317,7 @@ class VersionStorage {
             const data = localStorage.getItem(this.metadataKey);
             return data ? JSON.parse(data) : { totalVersions: 0, baseVersions: 0, tailoredVersions: 0 };
         } catch (error) {
-            console.error('Failed to load metadata:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load metadata:', error);
             return { totalVersions: 0, baseVersions: 0, tailoredVersions: 0 };
         }
     }
@@ -366,7 +366,7 @@ class VersionStorage {
 
             return true;
         } catch (error) {
-            console.error('Failed to import versions:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to import versions:', error);
             return false;
         }
     }
@@ -381,7 +381,7 @@ class VersionStorage {
             localStorage.removeItem(this.metadataKey);
             return true;
         } catch (error) {
-            console.error('Failed to clear versions:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to clear versions:', error);
             return false;
         }
     }
@@ -406,7 +406,7 @@ class VersionStorage {
                 percentage: ((bytes / (5 * 1024 * 1024)) * 100).toFixed(2) // Assuming 5MB localStorage limit
             };
         } catch (error) {
-            console.error('Failed to calculate storage usage:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to calculate storage usage:', error);
             return { versions: 0, bytes: 0, kilobytes: 0, megabytes: 0, percentage: 0 };
         }
     }

@@ -17,7 +17,7 @@ const colors = {
 };
 
 function log(message, color = colors.reset) {
-    console.log(`${color}${message}${colors.reset}`);
+    if (typeof logger !== 'undefined') logger.info(`${color}${message}${colors.reset}`);
 }
 
 function logSuccess(message) {
@@ -84,14 +84,14 @@ JavaScript, Python, React, Node.js, AWS`;
             passCount++;
         } else {
             logError('Plain text parsing failed');
-            console.log('  Error:', result.error);
+            if (typeof logger !== 'undefined') logger.info('  Error:', result.error);
             failCount++;
         }
     } catch (error) {
         logError(`Plain text parsing threw error: ${error.message}`);
         failCount++;
     }
-    console.log('');
+    if (typeof logger !== 'undefined') logger.info('');
 
     // Test 2: File type detection
     log('Test 2: File Type Detection', colors.cyan);
@@ -126,7 +126,7 @@ JavaScript, Python, React, Node.js, AWS`;
         logError(`File type detection threw error: ${error.message}`);
         failCount++;
     }
-    console.log('');
+    if (typeof logger !== 'undefined') logger.info('');
 
     // Test 3: Resume validation
     log('Test 3: Resume Validation', colors.cyan);
@@ -173,14 +173,14 @@ JavaScript, Python, React, Node.js, AWS`;
             passCount++;
         } else {
             logError('Resume validation failed');
-            console.log('  Errors:', validation.errors);
+            if (typeof logger !== 'undefined') logger.info('  Errors:', validation.errors);
             failCount++;
         }
     } catch (error) {
         logError(`Resume validation threw error: ${error.message}`);
         failCount++;
     }
-    console.log('');
+    if (typeof logger !== 'undefined') logger.info('');
 
     // Test 4: Completeness scoring
     log('Test 4: Completeness Scoring', colors.cyan);
@@ -241,7 +241,7 @@ JavaScript, Python, React, Node.js, AWS`;
         logError(`Completeness scoring threw error: ${error.message}`);
         failCount++;
     }
-    console.log('');
+    if (typeof logger !== 'undefined') logger.info('');
 
     // Test 5: Multiple resume parsing (mock)
     log('Test 5: Batch Parsing Interface', colors.cyan);
@@ -262,14 +262,14 @@ JavaScript, Python, React, Node.js, AWS`;
             passCount++;
         } else {
             logError('Batch parsing failed');
-            console.log('  Results:', results);
+            if (typeof logger !== 'undefined') logger.info('  Results:', results);
             failCount++;
         }
     } catch (error) {
         logError(`Batch parsing threw error: ${error.message}`);
         failCount++;
     }
-    console.log('');
+    if (typeof logger !== 'undefined') logger.info('');
 
     // Summary
     log('===========================================', colors.bright);
@@ -288,7 +288,7 @@ JavaScript, Python, React, Node.js, AWS`;
     } else {
         log('Some tests failed. Please review the errors above.', colors.red + colors.bright);
     }
-    console.log('');
+    if (typeof logger !== 'undefined') logger.info('');
 
     // Additional info
     logInfo('Note: PDF and DOCX parsing require actual file samples to test.');
@@ -299,6 +299,6 @@ JavaScript, Python, React, Node.js, AWS`;
 // Run tests
 runTests().catch(error => {
     logError(`Test suite failed: ${error.message}`);
-    console.error(error);
+    if (typeof logger !== 'undefined') logger.error(error);
     process.exit(1);
 });

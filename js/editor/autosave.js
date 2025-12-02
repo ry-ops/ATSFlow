@@ -41,7 +41,7 @@ class AutoSaveManager {
             this.start();
         }
 
-        console.log('Auto-save manager initialized. Interval:', this.interval, 'ms');
+        if (typeof logger !== 'undefined') logger.info('Auto-save manager initialized. Interval:', this.interval, 'ms');
     }
 
     /**
@@ -58,7 +58,7 @@ class AutoSaveManager {
         // Add to document
         document.body.appendChild(this.indicatorElement);
 
-        console.log('Auto-save indicator created');
+        if (typeof logger !== 'undefined') logger.info('Auto-save indicator created');
     }
 
     /**
@@ -90,7 +90,7 @@ class AutoSaveManager {
             this.performSave();
         }, this.interval);
 
-        console.log('Auto-save started. Interval:', this.interval, 'ms');
+        if (typeof logger !== 'undefined') logger.info('Auto-save started. Interval:', this.interval, 'ms');
         this.emit('autoSaveStarted');
     }
 
@@ -104,7 +104,7 @@ class AutoSaveManager {
         }
 
         this.enabled = false;
-        console.log('Auto-save stopped');
+        if (typeof logger !== 'undefined') logger.info('Auto-save stopped');
         this.emit('autoSaveStopped');
     }
 
@@ -113,12 +113,12 @@ class AutoSaveManager {
      */
     performSave() {
         if (!this.pendingChanges) {
-            console.log('Auto-save skipped: No pending changes');
+            if (typeof logger !== 'undefined') logger.info('Auto-save skipped: No pending changes');
             return;
         }
 
         this.updateIndicator('saving');
-        console.log('Auto-save: Saving state...');
+        if (typeof logger !== 'undefined') logger.info('Auto-save: Saving state...');
 
         try {
             // Save state
@@ -134,14 +134,14 @@ class AutoSaveManager {
                     timestamp: this.lastSaveTime
                 });
 
-                console.log('Auto-save completed successfully at', new Date(this.lastSaveTime).toLocaleTimeString());
+                if (typeof logger !== 'undefined') logger.info('Auto-save completed successfully at', new Date(this.lastSaveTime).toLocaleTimeString());
             } else {
                 this.updateIndicator('error');
                 this.emit('autoSaveFailed', {
                     error: 'Save operation returned false'
                 });
 
-                console.error('Auto-save failed');
+                if (typeof logger !== 'undefined') logger.error('Auto-save failed');
             }
         } catch (error) {
             this.updateIndicator('error');
@@ -149,7 +149,7 @@ class AutoSaveManager {
                 error: error.message
             });
 
-            console.error('Auto-save error:', error);
+            if (typeof logger !== 'undefined') logger.error('Auto-save error:', error);
         }
     }
 
@@ -157,7 +157,7 @@ class AutoSaveManager {
      * Force immediate save
      */
     forceSave() {
-        console.log('Force save triggered');
+        if (typeof logger !== 'undefined') logger.info('Force save triggered');
         this.performSave();
     }
 
@@ -243,7 +243,7 @@ class AutoSaveManager {
      */
     setInterval(milliseconds) {
         if (milliseconds < this.minInterval) {
-            console.warn('Interval too short, using minimum:', this.minInterval);
+            if (typeof logger !== 'undefined') logger.warn('Interval too short, using minimum:', this.minInterval);
             milliseconds = this.minInterval;
         }
 
@@ -255,7 +255,7 @@ class AutoSaveManager {
             this.start();
         }
 
-        console.log('Auto-save interval updated to:', milliseconds, 'ms');
+        if (typeof logger !== 'undefined') logger.info('Auto-save interval updated to:', milliseconds, 'ms');
         this.emit('intervalChanged', milliseconds);
     }
 
@@ -304,7 +304,7 @@ class AutoSaveManager {
         try {
             localStorage.setItem('resumate_last_save', this.lastSaveTime.toString());
         } catch (error) {
-            console.error('Failed to persist last save time:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to persist last save time:', error);
         }
     }
 
@@ -316,10 +316,10 @@ class AutoSaveManager {
             const saved = localStorage.getItem('resumate_last_save');
             if (saved) {
                 this.lastSaveTime = parseInt(saved, 10);
-                console.log('Last save time loaded:', new Date(this.lastSaveTime).toLocaleString());
+                if (typeof logger !== 'undefined') logger.info('Last save time loaded:', new Date(this.lastSaveTime).toLocaleString());
             }
         } catch (error) {
-            console.error('Failed to load last save time:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load last save time:', error);
         }
     }
 
@@ -365,7 +365,7 @@ class AutoSaveManager {
                 try {
                     callback(data);
                 } catch (error) {
-                    console.error(`Error in auto-save listener for ${event}:`, error);
+                    if (typeof logger !== 'undefined') logger.error(`Error in auto-save listener for ${event}:`, error);
                 }
             });
         }
@@ -387,7 +387,7 @@ class AutoSaveManager {
             }
         });
 
-        console.log('beforeunload handler set up');
+        if (typeof logger !== 'undefined') logger.info('beforeunload handler set up');
     }
 
     /**
@@ -396,12 +396,12 @@ class AutoSaveManager {
     setupVisibilityHandler() {
         document.addEventListener('visibilitychange', () => {
             if (document.hidden && this.pendingChanges) {
-                console.log('Tab hidden, performing auto-save...');
+                if (typeof logger !== 'undefined') logger.info('Tab hidden, performing auto-save...');
                 this.performSave();
             }
         });
 
-        console.log('Visibility change handler set up');
+        if (typeof logger !== 'undefined') logger.info('Visibility change handler set up');
     }
 
     /**
@@ -410,7 +410,7 @@ class AutoSaveManager {
     enableSafetyFeatures() {
         this.setupBeforeUnload();
         this.setupVisibilityHandler();
-        console.log('Auto-save safety features enabled');
+        if (typeof logger !== 'undefined') logger.info('Auto-save safety features enabled');
     }
 
     /**
@@ -424,7 +424,7 @@ class AutoSaveManager {
         }
 
         this.listeners = {};
-        console.log('Auto-save manager destroyed');
+        if (typeof logger !== 'undefined') logger.info('Auto-save manager destroyed');
     }
 }
 

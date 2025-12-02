@@ -196,7 +196,7 @@ class CoverLetterGenerator {
                 }
             };
         } catch (error) {
-            console.error('Generation from scratch failed:', error);
+            if (typeof logger !== 'undefined') logger.error('Generation from scratch failed:', error);
             return {
                 success: false,
                 error: error.message,
@@ -296,7 +296,7 @@ class CoverLetterGenerator {
                 }
             };
         } catch (error) {
-            console.error('Rewrite failed:', error);
+            if (typeof logger !== 'undefined') logger.error('Rewrite failed:', error);
             return {
                 success: false,
                 error: error.message,
@@ -394,7 +394,7 @@ class CoverLetterGenerator {
                 }
             };
         } catch (error) {
-            console.error('Tailoring failed:', error);
+            if (typeof logger !== 'undefined') logger.error('Tailoring failed:', error);
             return {
                 success: false,
                 error: error.message,
@@ -450,7 +450,7 @@ class CoverLetterGenerator {
                 }
             };
         } catch (error) {
-            console.error('Template generation failed:', error);
+            if (typeof logger !== 'undefined') logger.error('Template generation failed:', error);
             return {
                 success: false,
                 error: error.message,
@@ -494,7 +494,7 @@ class CoverLetterGenerator {
                 const cleanedContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
                 analysis = JSON.parse(cleanedContent);
             } catch (parseError) {
-                console.error('Failed to parse analysis JSON:', parseError);
+                if (typeof logger !== 'undefined') logger.error('Failed to parse analysis JSON:', parseError);
                 throw new Error('Failed to parse analysis results');
             }
 
@@ -506,7 +506,7 @@ class CoverLetterGenerator {
                 }
             };
         } catch (error) {
-            console.error('Analysis failed:', error);
+            if (typeof logger !== 'undefined') logger.error('Analysis failed:', error);
             return {
                 success: false,
                 error: error.message,
@@ -566,7 +566,7 @@ class CoverLetterGenerator {
             const recentHistory = this.generationHistory.slice(-20);
             localStorage.setItem('coverletter_history', JSON.stringify(recentHistory));
         } catch (error) {
-            console.error('Failed to save history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to save history:', error);
         }
     }
 
@@ -580,7 +580,7 @@ class CoverLetterGenerator {
                 this.generationHistory = JSON.parse(saved);
             }
         } catch (error) {
-            console.error('Failed to load history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load history:', error);
             this.generationHistory = [];
         }
     }

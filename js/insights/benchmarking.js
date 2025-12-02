@@ -17,7 +17,7 @@ class BenchmarkingEngine {
       const data = localStorage.getItem(this.storageKey);
       return data ? JSON.parse(data) : {};
     } catch (error) {
-      console.error('Failed to load benchmarking data:', error);
+      if (typeof logger !== 'undefined') logger.error('Failed to load benchmarking data:', error);
       return {};
     }
   }
@@ -29,7 +29,7 @@ class BenchmarkingEngine {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.cache));
     } catch (error) {
-      console.error('Failed to save benchmarking data:', error);
+      if (typeof logger !== 'undefined') logger.error('Failed to save benchmarking data:', error);
     }
   }
 

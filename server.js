@@ -7,6 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const parser = require('./js/export/parser');
+const logger = require('./js/utils/logger');
 
 const app = express();
 const PORT = process.env.PORT || 3101;
@@ -38,7 +39,7 @@ let cspConfig;
 try {
     cspConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'security', 'csp-config.json'), 'utf8'));
 } catch (error) {
-    console.warn('[Security] CSP config not found, using default policy');
+    logger.warn('[Security] CSP config not found, using default policy');
     cspConfig = null;
 }
 
@@ -180,8 +181,8 @@ app.post('/api/parse', rateLimit, upload.single('resume'), async (req, res) => {
         const apiKey = req.body.apiKey || null;
         const useAI = req.body.useAI === 'true' || req.body.useAI === true;
 
-        console.log(`[Parse] Processing file: ${req.file.originalname} (${req.file.size} bytes)`);
-        console.log(`[Parse] AI extraction: ${useAI ? 'enabled' : 'disabled'}`);
+        logger.info(`[Parse] Processing file: ${req.file.originalname} (${req.file.size} bytes)`);
+        logger.info(`[Parse] AI extraction: ${useAI ? 'enabled' : 'disabled'}`);
 
         // Parse the resume
         const result = await parser.parseResume(
@@ -204,7 +205,7 @@ app.post('/api/parse', rateLimit, upload.single('resume'), async (req, res) => {
         res.json(result);
 
     } catch (error) {
-        console.error('[Parse] Error:', error);
+        logger.error('[Parse] Error:', error);
         res.status(500).json({
             success: false,
             error: error.message || 'Failed to parse resume'
@@ -231,7 +232,7 @@ app.post('/api/extract', rateLimit, upload.single('resume'), async (req, res) =>
             });
         }
 
-        console.log(`[Extract] Processing file: ${req.file.originalname}`);
+        logger.info(`[Extract] Processing file: ${req.file.originalname}`);
 
         // Parse with AI extraction enabled
         const result = await parser.parseResume(
@@ -248,7 +249,7 @@ app.post('/api/extract', rateLimit, upload.single('resume'), async (req, res) =>
         res.json(result);
 
     } catch (error) {
-        console.error('[Extract] Error:', error);
+        logger.error('[Extract] Error:', error);
         res.status(500).json({
             success: false,
             error: error.message || 'Failed to extract resume data'
@@ -269,7 +270,7 @@ app.post('/api/parse-batch', rateLimit, upload.array('resumes', 10), async (req,
         const apiKey = req.body.apiKey || null;
         const useAI = req.body.useAI === 'true' || req.body.useAI === true;
 
-        console.log(`[Batch Parse] Processing ${req.files.length} files`);
+        logger.info(`[Batch Parse] Processing ${req.files.length} files`);
 
         const files = req.files.map(file => ({
             buffer: file.buffer,
@@ -289,7 +290,7 @@ app.post('/api/parse-batch', rateLimit, upload.array('resumes', 10), async (req,
         });
 
     } catch (error) {
-        console.error('[Batch Parse] Error:', error);
+        logger.error('[Batch Parse] Error:', error);
         res.status(500).json({
             success: false,
             error: error.message || 'Failed to parse resumes'
@@ -319,7 +320,7 @@ async function callClaudeAPI(apiKey, prompt, maxTokens = 4096, temperature = 0.7
 
     if (!response.ok) {
         const error = await response.json();
-        console.error('Claude API Error:', {
+        logger.error('Claude API Error:', {
             status: response.status,
             error: error
         });
@@ -363,7 +364,7 @@ Format your response clearly with headers and bullet points.`;
         const analysis = await callClaudeAPI(apiKey, prompt, 4096, 0.7);
         res.json({ analysis });
     } catch (error) {
-        console.error('API Error:', error);
+        logger.error('API Error:', error);
         res.status(error.status || 500).json({
             error: error.message || 'Failed to connect to Claude API'
         });
@@ -408,11 +409,11 @@ app.post('/api/generate', rateLimit, async (req, res) => {
     }
 
     try {
-        console.log(`[Generate] Processing content generation request (${prompt.substring(0, 50)}...)`);
+        logger.info(`[Generate] Processing content generation request (${prompt.substring(0, 50)}...)`);
         const content = await callClaudeAPI(apiKey, prompt, validMaxTokens, validTemperature);
         res.json({ content });
     } catch (error) {
-        console.error('Generation API Error:', error);
+        logger.error('Generation API Error:', error);
         res.status(error.status || 500).json({
             error: error.message || 'Failed to generate content'
         });
@@ -445,7 +446,7 @@ app.post('/api/tailor', rateLimit, async (req, res) => {
     }
 
     try {
-        console.log(`[Tailor] Processing tailoring request`);
+        logger.info(`[Tailor] Processing tailoring request`);
 
         // Step 1: Parse job description
         const jobParsePrompt = `Analyze this job description and extract key information. Return ONLY valid JSON without any markdown formatting or code blocks.
@@ -483,7 +484,7 @@ Important: Return ONLY the JSON object, no other text or formatting.`;
             const jsonText = jsonMatch ? jsonMatch[0] : jobDataResponse;
             jobData = JSON.parse(jsonText);
         } catch (parseError) {
-            console.error('[Tailor] Failed to parse job data:', parseError);
+            logger.error('[Tailor] Failed to parse job data:', parseError);
             jobData = {
                 jobTitle: 'Unknown',
                 requiredSkills: [],
@@ -500,7 +501,7 @@ Important: Return ONLY the JSON object, no other text or formatting.`;
         });
 
     } catch (error) {
-        console.error('Tailoring API Error:', error);
+        logger.error('Tailoring API Error:', error);
         res.status(error.status || 500).json({
             error: error.message || 'Failed to process tailoring request'
         });
@@ -518,7 +519,7 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`
+    logger.info(`
 ┌─────────────────────────────────────────────────────┐
 │  ResuMate Server                                    │
 ├─────────────────────────────────────────────────────┤

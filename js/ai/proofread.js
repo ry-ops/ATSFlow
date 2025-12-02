@@ -111,7 +111,7 @@ class ProofreadEngine {
 
             return results;
         } catch (error) {
-            console.error('Proofreading error:', error);
+            if (typeof logger !== 'undefined') logger.error('Proofreading error:', error);
             throw new Error(`Proofreading failed: ${error.message}`);
         }
     }
@@ -124,7 +124,7 @@ class ProofreadEngine {
      */
     async _runAIProofreading(content) {
         if (!this.generator || typeof AIPrompts === 'undefined') {
-            console.warn('AI proofreading unavailable - generator or prompts not loaded');
+            if (typeof logger !== 'undefined') logger.warn('AI proofreading unavailable - generator or prompts not loaded');
             return [];
         }
 
@@ -149,7 +149,7 @@ class ProofreadEngine {
                 source: 'ai'
             }));
         } catch (error) {
-            console.error('AI proofreading error:', error);
+            if (typeof logger !== 'undefined') logger.error('AI proofreading error:', error);
             return [];
         }
     }

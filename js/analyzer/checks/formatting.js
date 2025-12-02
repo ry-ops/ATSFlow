@@ -37,7 +37,7 @@ class FormattingChecks {
                     ...result
                 });
             } catch (error) {
-                console.error(`Error running check ${checkName}:`, error);
+                if (typeof logger !== 'undefined') logger.error(`Error running check ${checkName}:`, error);
                 results.push({
                     category: 'formatting',
                     checkName,

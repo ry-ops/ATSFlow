@@ -49,7 +49,7 @@ class StructureChecks {
                     ...result
                 });
             } catch (error) {
-                console.error(`Error running check ${checkName}:`, error);
+                if (typeof logger !== 'undefined') logger.error(`Error running check ${checkName}:`, error);
                 results.push({
                     category: 'structure',
                     checkName,

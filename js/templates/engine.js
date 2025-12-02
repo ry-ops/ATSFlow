@@ -64,10 +64,10 @@ class TemplateEngine {
             // Notify listeners
             this.notifyListeners('templateChanged', template);
 
-            console.log(`Template '${templateId}' loaded successfully`);
+            if (typeof logger !== 'undefined') logger.info(`Template '${templateId}' loaded successfully`);
             return true;
         } catch (error) {
-            console.error('Failed to load template:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load template:', error);
             return false;
         }
     }
@@ -97,7 +97,7 @@ class TemplateEngine {
      */
     async switchTemplate(templateId) {
         if (this.currentTemplate && this.currentTemplate.id === templateId) {
-            console.log('Template already active');
+            if (typeof logger !== 'undefined') logger.info('Template already active');
             return true;
         }
 
@@ -223,7 +223,7 @@ class TemplateEngine {
             try {
                 return JSON.parse(saved);
             } catch (error) {
-                console.error('Failed to parse saved customizations:', error);
+                if (typeof logger !== 'undefined') logger.error('Failed to parse saved customizations:', error);
                 return null;
             }
         }
@@ -256,7 +256,7 @@ class TemplateEngine {
             try {
                 callback(event, data);
             } catch (error) {
-                console.error('Error in template engine listener:', error);
+                if (typeof logger !== 'undefined') logger.error('Error in template engine listener:', error);
             }
         });
     }
@@ -310,7 +310,7 @@ class TemplateEngine {
 
             return true;
         } catch (error) {
-            console.error('Failed to import configuration:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to import configuration:', error);
             return false;
         }
     }

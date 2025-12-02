@@ -54,14 +54,14 @@ class PDFExporter {
             const clonedElement = this.prepareElementForPDF(element);
 
             // Generate PDF
-            console.log('[PDFExporter] Generating PDF...', pdfOptions);
+            if (typeof logger !== 'undefined') logger.info('[PDFExporter] Generating PDF...', pdfOptions);
 
             await html2pdf()
                 .set(pdfOptions)
                 .from(clonedElement)
                 .save();
 
-            console.log('[PDFExporter] PDF generated successfully');
+            if (typeof logger !== 'undefined') logger.info('[PDFExporter] PDF generated successfully');
 
             // Cleanup
             if (clonedElement.parentNode) {
@@ -70,7 +70,7 @@ class PDFExporter {
 
             return { success: true, message: 'PDF exported successfully' };
         } catch (error) {
-            console.error('[PDFExporter] Export failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[PDFExporter] Export failed:', error);
             throw new Error(`PDF export failed: ${error.message}`);
         }
     }
@@ -102,7 +102,7 @@ class PDFExporter {
 
             return pdfBlob;
         } catch (error) {
-            console.error('[PDFExporter] Blob generation failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[PDFExporter] Blob generation failed:', error);
             throw error;
         }
     }
@@ -136,7 +136,7 @@ class PDFExporter {
         const images = clone.querySelectorAll('img');
         images.forEach(img => {
             if (!img.complete) {
-                console.warn('[PDFExporter] Image not fully loaded:', img.src);
+                if (typeof logger !== 'undefined') logger.warn('[PDFExporter] Image not fully loaded:', img.src);
             }
         });
 
@@ -262,7 +262,7 @@ class PDFExporter {
             });
             return blob.size;
         } catch (error) {
-            console.error('[PDFExporter] Size estimation failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[PDFExporter] Size estimation failed:', error);
             return 0;
         }
     }

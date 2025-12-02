@@ -560,8 +560,8 @@ class AIGenerator {
 
             return JSON.parse(cleaned);
         } catch (error) {
-            console.error('Failed to parse JSON:', error);
-            console.error('Content:', content);
+            if (typeof logger !== 'undefined') logger.error('Failed to parse JSON:', error);
+            if (typeof logger !== 'undefined') logger.error('Content:', content);
             throw new Error('Failed to parse AI response as JSON: ' + error.message);
         }
     }

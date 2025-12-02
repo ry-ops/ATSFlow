@@ -36,7 +36,7 @@ class KanbanBoard {
    */
   init() {
     if (!this.container) {
-      console.error('Board container not found');
+      if (typeof logger !== 'undefined') logger.error('Board container not found');
       return;
     }
 

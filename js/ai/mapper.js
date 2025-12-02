@@ -21,7 +21,7 @@ class ResumeJobMapper {
      * @returns {Object} Match analysis with percentage and details
      */
     calculateMatch(resumeData, jobData) {
-        console.log('[Mapper] Calculating resume-to-job match...');
+        if (typeof logger !== 'undefined') logger.info('[Mapper] Calculating resume-to-job match...');
 
         // Extract all text from resume
         const resumeText = this.extractResumeText(resumeData);
@@ -93,7 +93,7 @@ class ResumeJobMapper {
             grade: this.getGrade(overallScore)
         };
 
-        console.log('[Mapper] Match calculation complete:', result.overallScore + '%');
+        if (typeof logger !== 'undefined') logger.info('[Mapper] Match calculation complete:', result.overallScore + '%');
         return result;
     }
 

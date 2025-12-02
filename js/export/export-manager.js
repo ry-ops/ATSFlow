@@ -40,10 +40,10 @@ class ExportManager {
             // Setup event listeners
             this.setupEventListeners();
 
-            console.log('[ExportManager] Initialized successfully');
+            if (typeof logger !== 'undefined') logger.info('[ExportManager] Initialized successfully');
             return true;
         } catch (error) {
-            console.error('[ExportManager] Initialization failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[ExportManager] Initialization failed:', error);
             return false;
         }
     }
@@ -284,7 +284,7 @@ class ExportManager {
      */
     openModal() {
         if (!this.modal) {
-            console.error('[ExportManager] Modal not initialized');
+            if (typeof logger !== 'undefined') logger.error('[ExportManager] Modal not initialized');
             return;
         }
 
@@ -405,7 +405,7 @@ class ExportManager {
             }, 2000);
 
         } catch (error) {
-            console.error('[ExportManager] Export failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[ExportManager] Export failed:', error);
             this.showMessage(`Export failed: ${error.message}`, 'error');
 
             // Re-enable button
@@ -492,7 +492,7 @@ class ExportManager {
 
         const resumeData = this.getResumeData();
         if (!resumeData) {
-            console.error('[ExportManager] No resume data available');
+            if (typeof logger !== 'undefined') logger.error('[ExportManager] No resume data available');
             return;
         }
 
@@ -514,9 +514,9 @@ class ExportManager {
                     await this.exportHTML(resumeData);
                     break;
             }
-            console.log(`[ExportManager] Quick export to ${format} completed`);
+            if (typeof logger !== 'undefined') logger.info(`[ExportManager] Quick export to ${format} completed`);
         } catch (error) {
-            console.error('[ExportManager] Quick export failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[ExportManager] Quick export failed:', error);
             throw error;
         }
     }
@@ -545,9 +545,9 @@ class ExportManager {
             // Clean up
             setTimeout(() => URL.revokeObjectURL(url), 100);
 
-            console.log(`[ExportManager] Cover letter exported to TXT: ${filename}.txt`);
+            if (typeof logger !== 'undefined') logger.info(`[ExportManager] Cover letter exported to TXT: ${filename}.txt`);
         } catch (error) {
-            console.error('[ExportManager] TXT export failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[ExportManager] TXT export failed:', error);
             throw error;
         }
     }
@@ -601,9 +601,9 @@ class ExportManager {
             // Clean up
             document.body.removeChild(tempContainer);
 
-            console.log(`[ExportManager] Cover letter exported to PDF: ${filename}.pdf`);
+            if (typeof logger !== 'undefined') logger.info(`[ExportManager] Cover letter exported to PDF: ${filename}.pdf`);
         } catch (error) {
-            console.error('[ExportManager] PDF export failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[ExportManager] PDF export failed:', error);
             throw error;
         }
     }
@@ -638,9 +638,9 @@ class ExportManager {
             // Download
             this.docxExporter.downloadDOCX(blob, filename);
 
-            console.log(`[ExportManager] Cover letter exported to DOCX: ${filename}.docx`);
+            if (typeof logger !== 'undefined') logger.info(`[ExportManager] Cover letter exported to DOCX: ${filename}.docx`);
         } catch (error) {
-            console.error('[ExportManager] DOCX export failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[ExportManager] DOCX export failed:', error);
             throw error;
         }
     }

@@ -123,7 +123,7 @@ class ToneAnalyzer {
 
             return results;
         } catch (error) {
-            console.error('Tone analysis error:', error);
+            if (typeof logger !== 'undefined') logger.error('Tone analysis error:', error);
             throw new Error(`Tone analysis failed: ${error.message}`);
         }
     }
@@ -310,7 +310,7 @@ class ToneAnalyzer {
      */
     async _runAIToneAnalysis(content, context) {
         if (!this.generator || typeof AIPrompts === 'undefined') {
-            console.warn('AI tone analysis unavailable - generator or prompts not loaded');
+            if (typeof logger !== 'undefined') logger.warn('AI tone analysis unavailable - generator or prompts not loaded');
             return null;
         }
 
@@ -329,7 +329,7 @@ class ToneAnalyzer {
             // Parse JSON response
             return JSON.parse(response);
         } catch (error) {
-            console.error('AI tone analysis error:', error);
+            if (typeof logger !== 'undefined') logger.error('AI tone analysis error:', error);
             return null;
         }
     }

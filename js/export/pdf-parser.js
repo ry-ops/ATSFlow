@@ -70,7 +70,7 @@ async function parsePDF(pdfBuffer) {
         };
 
     } catch (error) {
-        console.error('PDF parsing error:', error);
+        if (typeof logger !== 'undefined') logger.error('PDF parsing error:', error);
         return {
             success: false,
             error: error.message,

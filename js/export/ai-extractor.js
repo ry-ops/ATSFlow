@@ -134,7 +134,7 @@ IMPORTANT INSTRUCTIONS:
 
         if (!response.ok) {
             const error = await response.json();
-            console.error('Claude API Error:', error);
+            if (typeof logger !== 'undefined') logger.error('Claude API Error:', error);
             return {
                 success: false,
                 error: error.error?.message || 'API request failed'
@@ -154,8 +154,8 @@ IMPORTANT INSTRUCTIONS:
             }
             resumeData = JSON.parse(cleanText);
         } catch (parseError) {
-            console.error('JSON parsing error:', parseError);
-            console.error('Extracted text:', extractedText);
+            if (typeof logger !== 'undefined') logger.error('JSON parsing error:', parseError);
+            if (typeof logger !== 'undefined') logger.error('Extracted text:', extractedText);
             return {
                 success: false,
                 error: 'Failed to parse AI response as JSON',
@@ -169,7 +169,7 @@ IMPORTANT INSTRUCTIONS:
         };
 
     } catch (error) {
-        console.error('AI extraction error:', error);
+        if (typeof logger !== 'undefined') logger.error('AI extraction error:', error);
         return {
             success: false,
             error: error.message
@@ -247,7 +247,7 @@ IMPORTANT: Return ONLY valid JSON array, no markdown, no explanations.`;
             }
             enhancedSections = JSON.parse(cleanText);
         } catch (parseError) {
-            console.error('JSON parsing error:', parseError);
+            if (typeof logger !== 'undefined') logger.error('JSON parsing error:', parseError);
             return {
                 success: false,
                 error: 'Failed to parse AI response',
@@ -261,7 +261,7 @@ IMPORTANT: Return ONLY valid JSON array, no markdown, no explanations.`;
         };
 
     } catch (error) {
-        console.error('Section enhancement error:', error);
+        if (typeof logger !== 'undefined') logger.error('Section enhancement error:', error);
         return {
             success: false,
             error: error.message,

@@ -192,7 +192,7 @@ class CryptoManager {
         }
 
         await this.storeApiKey(unencryptedKey, passphrase);
-        console.log('[Security] API key migrated to encrypted storage');
+        if (typeof logger !== 'undefined') logger.info('[Security] API key migrated to encrypted storage');
         return true;
     }
 
@@ -252,6 +252,6 @@ const cryptoManager = new CryptoManager();
 
 // Browser compatibility check
 if (typeof crypto === 'undefined' || !crypto.subtle) {
-    console.error('[Security] Web Crypto API not available. Encryption features disabled.');
-    console.error('[Security] Please use HTTPS or a modern browser that supports Web Crypto API.');
+    if (typeof logger !== 'undefined') logger.error('[Security] Web Crypto API not available. Encryption features disabled.');
+    if (typeof logger !== 'undefined') logger.error('[Security] Please use HTTPS or a modern browser that supports Web Crypto API.');
 }

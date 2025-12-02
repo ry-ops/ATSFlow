@@ -60,7 +60,7 @@ class LinkedInOptimizer {
             const data = await response.json();
             return data.content;
         } catch (error) {
-            console.error('API request error:', error);
+            if (typeof logger !== 'undefined') logger.error('API request error:', error);
             throw error;
         }
     }
@@ -197,7 +197,7 @@ class LinkedInOptimizer {
                 ...analysis
             };
         } catch (error) {
-            console.error('Failed to parse alignment analysis:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to parse alignment analysis:', error);
             return {
                 success: false,
                 error: 'Failed to parse AI response',
@@ -262,7 +262,7 @@ Return ONLY valid JSON without markdown formatting.`;
                 ...recommendations
             };
         } catch (error) {
-            console.error('Failed to get skill recommendations:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to get skill recommendations:', error);
             return {
                 success: false,
                 error: error.message
@@ -312,7 +312,7 @@ Return ONLY the optimized description without any preamble.`;
                     keywordsAdded: this._identifyAddedKeywords(exp.description, optimizedDesc, keywords)
                 });
             } catch (error) {
-                console.error(`Failed to optimize experience: ${exp.title}`, error);
+                if (typeof logger !== 'undefined') logger.error(`Failed to optimize experience: ${exp.title}`, error);
                 optimized.push({
                     ...exp,
                     error: error.message
@@ -354,7 +354,7 @@ Return bullet points only, one per line, starting with •`;
 
             return this._parseBulletPoints(content);
         } catch (error) {
-            console.error('Failed to generate LinkedIn bullets:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to generate LinkedIn bullets:', error);
             throw error;
         }
     }

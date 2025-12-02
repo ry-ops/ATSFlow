@@ -24,7 +24,7 @@ class ProofreadUI {
      * Initialize UI controller
      */
     init() {
-        console.log('ProofreadUI initialized');
+        if (typeof logger !== 'undefined') logger.info('ProofreadUI initialized');
     }
 
     /**
@@ -87,7 +87,7 @@ class ProofreadUI {
             return results;
         } catch (error) {
             this._hideProgress();
-            console.error('Full analysis error:', error);
+            if (typeof logger !== 'undefined') logger.error('Full analysis error:', error);
             throw error;
         }
     }
@@ -125,7 +125,7 @@ class ProofreadUI {
     displayResults(containerId, results) {
         const container = document.getElementById(containerId);
         if (!container) {
-            console.error(`Container ${containerId} not found`);
+            if (typeof logger !== 'undefined') logger.error(`Container ${containerId} not found`);
             return;
         }
 
@@ -492,7 +492,7 @@ class ProofreadUI {
      * @param {string} issueId - Issue ID
      */
     applyFix(issueId) {
-        console.log('Apply fix:', issueId);
+        if (typeof logger !== 'undefined') logger.info('Apply fix:', issueId);
         // Implementation would integrate with editor to apply the fix
         alert('Fix applied! (Integration with editor required)');
 

@@ -277,7 +277,9 @@ class ResumeState {
                 try {
                     callback(data);
                 } catch (error) {
-                    console.error(`Error in listener for ${event}:`, error);
+                    if (typeof logger !== 'undefined') {
+                        logger.error(`Error in listener for ${event}:`, error);
+                    }
                 }
             });
         }
@@ -292,10 +294,14 @@ class ResumeState {
             if (saved) {
                 const parsed = JSON.parse(saved);
                 this.state = { ...this.state, ...parsed };
-                console.log('State loaded from localStorage');
+                if (typeof logger !== 'undefined') {
+                    logger.info('State loaded from localStorage');
+                }
             }
         } catch (error) {
-            console.error('Failed to load state from localStorage:', error);
+            if (typeof logger !== 'undefined') {
+                logger.error('Failed to load state from localStorage:', error);
+            }
         }
     }
 
@@ -307,10 +313,14 @@ class ResumeState {
             localStorage.setItem('resumate_state', JSON.stringify(this.state));
             this.state.ui.saveStatus = 'saved';
             this.emit('saveStatusChanged', 'saved');
-            console.log('State saved to localStorage');
+            if (typeof logger !== 'undefined') {
+                logger.info('State saved to localStorage');
+            }
             return true;
         } catch (error) {
-            console.error('Failed to save state to localStorage:', error);
+            if (typeof logger !== 'undefined') {
+                logger.error('Failed to save state to localStorage:', error);
+            }
             return false;
         }
     }
@@ -332,7 +342,9 @@ class ResumeState {
             this.emit('stateImported');
             return true;
         } catch (error) {
-            console.error('Failed to import state:', error);
+            if (typeof logger !== 'undefined') {
+                logger.error('Failed to import state:', error);
+            }
             return false;
         }
     }

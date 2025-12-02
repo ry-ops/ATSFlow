@@ -102,7 +102,7 @@ class ConsistencyChecker {
 
             return results;
         } catch (error) {
-            console.error('Consistency check error:', error);
+            if (typeof logger !== 'undefined') logger.error('Consistency check error:', error);
             throw new Error(`Consistency check failed: ${error.message}`);
         }
     }

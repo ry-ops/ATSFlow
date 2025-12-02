@@ -32,7 +32,7 @@ class DiffViewer {
      */
     render() {
         if (!this.container || !this.tailoringSession) {
-            console.error('[DiffViewer] Missing container or session data');
+            if (typeof logger !== 'undefined') logger.error('[DiffViewer] Missing container or session data');
             return;
         }
 
@@ -213,12 +213,12 @@ class DiffViewer {
         const suggestion = this.tailoringSession.suggestions.find(s => s.id === suggestionId);
 
         if (!suggestion) {
-            console.error('[DiffViewer] Suggestion not found:', suggestionId);
+            if (typeof logger !== 'undefined') logger.error('[DiffViewer] Suggestion not found:', suggestionId);
             return;
         }
 
         if (suggestion.applied) {
-            console.log('[DiffViewer] Suggestion already applied');
+            if (typeof logger !== 'undefined') logger.info('[DiffViewer] Suggestion already applied');
             return;
         }
 
@@ -235,7 +235,7 @@ class DiffViewer {
         // Re-render to show applied state
         this.render();
 
-        console.log('[DiffViewer] Applied suggestion:', suggestionId);
+        if (typeof logger !== 'undefined') logger.info('[DiffViewer] Applied suggestion:', suggestionId);
     }
 
     /**
@@ -245,7 +245,7 @@ class DiffViewer {
         const unapplied = this.tailoringSession.suggestions.filter(s => !s.applied);
 
         if (unapplied.length === 0) {
-            console.log('[DiffViewer] All suggestions already applied');
+            if (typeof logger !== 'undefined') logger.info('[DiffViewer] All suggestions already applied');
             return;
         }
 
@@ -269,7 +269,7 @@ class DiffViewer {
         // Re-render
         this.render();
 
-        console.log(`[DiffViewer] Applied ${unapplied.length} suggestions`);
+        if (typeof logger !== 'undefined') logger.info(`[DiffViewer] Applied ${unapplied.length} suggestions`);
     }
 
     /**

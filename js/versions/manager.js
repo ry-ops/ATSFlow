@@ -592,7 +592,7 @@ class VersionManager {
                 try {
                     callback(data);
                 } catch (error) {
-                    console.error(`Error in listener for ${event}:`, error);
+                    if (typeof logger !== 'undefined') logger.error(`Error in listener for ${event}:`, error);
                 }
             });
         }

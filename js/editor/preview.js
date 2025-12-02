@@ -30,7 +30,7 @@ class PreviewController {
         this.previewContainer = document.getElementById(containerId);
 
         if (!this.previewContainer) {
-            console.error(`Preview container '${containerId}' not found`);
+            if (typeof logger !== 'undefined') logger.error(`Preview container '${containerId}' not found`);
             return false;
         }
 
@@ -46,7 +46,7 @@ class PreviewController {
         // Initial render
         this.render(this.getResumeState());
 
-        console.log('[Preview] Initialized successfully');
+        if (typeof logger !== 'undefined') logger.info('[Preview] Initialized successfully');
         return true;
     }
 
@@ -203,7 +203,7 @@ class PreviewController {
             activeBtn.classList.add('active');
         }
 
-        console.log(`[Preview] View mode changed to: ${mode}`);
+        if (typeof logger !== 'undefined') logger.info(`[Preview] View mode changed to: ${mode}`);
     }
 
     /**
@@ -227,7 +227,7 @@ class PreviewController {
             window.exportManager.printManager.togglePrintPreview();
         }
 
-        console.log(`[Preview] Print preview: ${this.printPreview}`);
+        if (typeof logger !== 'undefined') logger.info(`[Preview] Print preview: ${this.printPreview}`);
     }
 
     /**
@@ -251,7 +251,7 @@ class PreviewController {
         // Re-render with new page size
         this.render(this.getResumeState());
 
-        console.log(`[Preview] Page size changed to: ${size}`);
+        if (typeof logger !== 'undefined') logger.info(`[Preview] Page size changed to: ${size}`);
     }
 
     /**
@@ -290,7 +290,7 @@ class PreviewController {
         const startTime = performance.now();
 
         if (!this.previewContainer) {
-            console.error('[Preview] Container not initialized');
+            if (typeof logger !== 'undefined') logger.error('[Preview] Container not initialized');
             return;
         }
 
@@ -319,15 +319,15 @@ class PreviewController {
             this.lastUpdateTime = renderTime;
             this.updateCount++;
 
-            console.log(`[Preview] Rendered in ${renderTime.toFixed(2)}ms (Update #${this.updateCount})`);
+            if (typeof logger !== 'undefined') logger.info(`[Preview] Rendered in ${renderTime.toFixed(2)}ms (Update #${this.updateCount})`);
 
             // Warn if render time exceeds target
             if (renderTime > 500) {
-                console.warn(`[Preview] Render time exceeded 500ms target: ${renderTime.toFixed(2)}ms`);
+                if (typeof logger !== 'undefined') logger.warn(`[Preview] Render time exceeded 500ms target: ${renderTime.toFixed(2)}ms`);
             }
 
         } catch (error) {
-            console.error('[Preview] Render error:', error);
+            if (typeof logger !== 'undefined') logger.error('[Preview] Render error:', error);
             this.showError('Failed to render preview');
         }
     }
@@ -376,7 +376,7 @@ class PreviewController {
             try {
                 return JSON.parse(savedState);
             } catch (e) {
-                console.error('[Preview] Failed to parse saved state:', e);
+                if (typeof logger !== 'undefined') logger.error('[Preview] Failed to parse saved state:', e);
             }
         }
 
@@ -461,7 +461,7 @@ class PreviewController {
 
         this.stateListener = null;
 
-        console.log('[Preview] Destroyed');
+        if (typeof logger !== 'undefined') logger.info('[Preview] Destroyed');
     }
 }
 

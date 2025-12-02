@@ -30,7 +30,7 @@ class VersionUI {
         this.container = document.getElementById(containerId);
 
         if (!this.container) {
-            console.error('Version UI container not found:', containerId);
+            if (typeof logger !== 'undefined') logger.error('Version UI container not found:', containerId);
             return;
         }
 
@@ -38,7 +38,7 @@ class VersionUI {
         this.attachEventListeners();
         this.initialized = true;
 
-        console.log('[VersionUI] Initialized');
+        if (typeof logger !== 'undefined') logger.info('[VersionUI] Initialized');
     }
 
     /**
@@ -558,11 +558,11 @@ class VersionUI {
                 resumeData: {} // Empty for now
             });
 
-            console.log('Created base version:', version);
+            if (typeof logger !== 'undefined') logger.info('Created base version:', version);
             this.closeModal();
             this.render();
         } catch (error) {
-            console.error('Failed to create base version:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to create base version:', error);
             alert('Failed to create base resume: ' + error.message);
         }
     }
@@ -618,11 +618,11 @@ class VersionUI {
                 jobUrl
             });
 
-            console.log('Created tailored version:', version);
+            if (typeof logger !== 'undefined') logger.info('Created tailored version:', version);
             this.closeModal();
             this.render();
         } catch (error) {
-            console.error('Failed to create tailored version:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to create tailored version:', error);
             alert('Failed to create tailored version: ' + error.message);
         }
     }
@@ -633,10 +633,10 @@ class VersionUI {
     cloneVersion(versionId) {
         try {
             const cloned = this.versionManager.cloneVersion(versionId);
-            console.log('Cloned version:', cloned);
+            if (typeof logger !== 'undefined') logger.info('Cloned version:', cloned);
             this.render();
         } catch (error) {
-            console.error('Failed to clone version:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to clone version:', error);
             alert('Failed to clone version: ' + error.message);
         }
     }
@@ -688,7 +688,7 @@ class VersionUI {
             this.closeModal();
             this.render();
         } catch (error) {
-            console.error('Failed to update version:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to update version:', error);
             alert('Failed to update version: ' + error.message);
         }
     }
@@ -723,11 +723,11 @@ class VersionUI {
 
         try {
             const result = this.versionMerger.mergeTailoredToBase(tailoredId);
-            console.log('Merge result:', result);
+            if (typeof logger !== 'undefined') logger.info('Merge result:', result);
             alert(`Merge successful! Applied ${result.appliedChanges.length} changes.`);
             this.render();
         } catch (error) {
-            console.error('Failed to merge:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to merge:', error);
             alert('Failed to merge: ' + error.message);
         }
     }
@@ -740,7 +740,7 @@ class VersionUI {
             this.versionManager.toggleFavorite(versionId);
             this.render();
         } catch (error) {
-            console.error('Failed to toggle favorite:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to toggle favorite:', error);
         }
     }
 
@@ -761,7 +761,7 @@ class VersionUI {
             }
             this.render();
         } catch (error) {
-            console.error('Failed to delete version:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to delete version:', error);
             alert('Failed to delete version: ' + error.message);
         }
     }
@@ -780,7 +780,7 @@ class VersionUI {
             a.click();
             URL.revokeObjectURL(url);
         } catch (error) {
-            console.error('Failed to export versions:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to export versions:', error);
             alert('Failed to export versions: ' + error.message);
         }
     }
@@ -805,7 +805,7 @@ class VersionUI {
                         alert('Failed to import versions');
                     }
                 } catch (error) {
-                    console.error('Failed to import versions:', error);
+                    if (typeof logger !== 'undefined') logger.error('Failed to import versions:', error);
                     alert('Failed to import versions: ' + error.message);
                 }
             };

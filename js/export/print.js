@@ -17,7 +17,7 @@ class PrintManager {
     initialize() {
         this.injectPrintStyles();
         this.setupPrintListeners();
-        console.log('[PrintManager] Initialized');
+        if (typeof logger !== 'undefined') logger.info('[PrintManager] Initialized');
     }
 
     /**
@@ -192,13 +192,13 @@ class PrintManager {
     setupPrintListeners() {
         // Before print event
         window.addEventListener('beforeprint', () => {
-            console.log('[PrintManager] Preparing for print...');
+            if (typeof logger !== 'undefined') logger.info('[PrintManager] Preparing for print...');
             this.beforePrint();
         });
 
         // After print event
         window.addEventListener('afterprint', () => {
-            console.log('[PrintManager] Print completed');
+            if (typeof logger !== 'undefined') logger.info('[PrintManager] Print completed');
             this.afterPrint();
         });
 
@@ -306,13 +306,13 @@ class PrintManager {
      */
     setPageSize(size) {
         if (size !== 'a4' && size !== 'letter') {
-            console.warn('[PrintManager] Invalid page size:', size);
+            if (typeof logger !== 'undefined') logger.warn('[PrintManager] Invalid page size:', size);
             return;
         }
 
         this.pageSize = size;
         this.applyPageSize();
-        console.log('[PrintManager] Page size set to:', size);
+        if (typeof logger !== 'undefined') logger.info('[PrintManager] Page size set to:', size);
     }
 
     /**
@@ -343,7 +343,7 @@ class PrintManager {
         // Optimize page breaks
         this.optimizePageBreaks();
 
-        console.log('[PrintManager] Print preview enabled');
+        if (typeof logger !== 'undefined') logger.info('[PrintManager] Print preview enabled');
     }
 
     /**
@@ -369,7 +369,7 @@ class PrintManager {
 
         this.originalStyles = null;
 
-        console.log('[PrintManager] Print preview disabled');
+        if (typeof logger !== 'undefined') logger.info('[PrintManager] Print preview disabled');
     }
 
     /**

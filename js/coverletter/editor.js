@@ -264,7 +264,7 @@ class CoverLetterEditor {
             }
         } catch (error) {
             this._setStatus(`Error: ${error.message}`, 'error');
-            console.error('Generation error:', error);
+            if (typeof logger !== 'undefined') logger.error('Generation error:', error);
         } finally {
             this.isGenerating = false;
             this._enableButtons();
@@ -324,7 +324,7 @@ class CoverLetterEditor {
             }
         } catch (error) {
             this._setStatus(`Error: ${error.message}`, 'error');
-            console.error('Rewrite error:', error);
+            if (typeof logger !== 'undefined') logger.error('Rewrite error:', error);
         } finally {
             this.isGenerating = false;
             this._enableButtons();
@@ -381,7 +381,7 @@ class CoverLetterEditor {
             }
         } catch (error) {
             this._setStatus(`Error: ${error.message}`, 'error');
-            console.error('Tailoring error:', error);
+            if (typeof logger !== 'undefined') logger.error('Tailoring error:', error);
         } finally {
             this.isGenerating = false;
             this._enableButtons();
@@ -423,7 +423,7 @@ class CoverLetterEditor {
             }
         } catch (error) {
             this._setStatus(`Error: ${error.message}`, 'error');
-            console.error('Analysis error:', error);
+            if (typeof logger !== 'undefined') logger.error('Analysis error:', error);
         } finally {
             this.isGenerating = false;
             this._enableButtons();
@@ -548,7 +548,7 @@ class CoverLetterEditor {
             this._setStatus(`Exported as ${format.toUpperCase()}`, 'success');
         } catch (error) {
             this._setStatus(`Export failed: ${error.message}`, 'error');
-            console.error('Export error:', error);
+            if (typeof logger !== 'undefined') logger.error('Export error:', error);
         }
     }
 
@@ -669,7 +669,7 @@ class CoverLetterEditor {
 
             localStorage.setItem('coverletter_editor_state', JSON.stringify(state));
         } catch (error) {
-            console.error('Failed to save state:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to save state:', error);
         }
     }
 
@@ -697,7 +697,7 @@ class CoverLetterEditor {
 
             this._updateUIForMode();
         } catch (error) {
-            console.error('Failed to load state:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load state:', error);
         }
     }
 

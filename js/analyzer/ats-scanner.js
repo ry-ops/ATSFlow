@@ -39,7 +39,7 @@ class ATSScanner {
     async scan(resumeData, options = {}) {
         const startTime = Date.now();
 
-        console.log('🔍 Starting ATS Scanner v2 - Comprehensive Analysis...');
+        if (typeof logger !== 'undefined') logger.info('🔍 Starting ATS Scanner v2 - Comprehensive Analysis...');
 
         try {
             // Validate input
@@ -50,17 +50,17 @@ class ATSScanner {
             // Run all check categories
             const checkResults = await this._runAllChecks(resumeData, options);
 
-            console.log(`✅ Completed ${checkResults.length} checks`);
+            if (typeof logger !== 'undefined') logger.info(`✅ Completed ${checkResults.length} checks`);
 
             // Calculate scores
             const scoreResult = this._calculateScores(checkResults, options);
 
-            console.log(`📊 Overall Score: ${scoreResult.overallScore}/100 (${scoreResult.grade})`);
+            if (typeof logger !== 'undefined') logger.info(`📊 Overall Score: ${scoreResult.overallScore}/100 (${scoreResult.grade})`);
 
             // Generate recommendations
             const recommendations = this._generateRecommendations(checkResults, scoreResult, options);
 
-            console.log(`💡 Generated ${recommendations.summary.totalRecommendations} recommendations`);
+            if (typeof logger !== 'undefined') logger.info(`💡 Generated ${recommendations.summary.totalRecommendations} recommendations`);
 
             // Compile final results
             const analysisResult = {
@@ -112,12 +112,12 @@ class ATSScanner {
                 atsScorer.saveToHistory(scoreResult);
             }
 
-            console.log(`✨ Analysis complete in ${analysisResult.executionTime}ms`);
+            if (typeof logger !== 'undefined') logger.info(`✨ Analysis complete in ${analysisResult.executionTime}ms`);
 
             return analysisResult;
 
         } catch (error) {
-            console.error('❌ ATS Scanner error:', error);
+            if (typeof logger !== 'undefined') logger.error('❌ ATS Scanner error:', error);
             return {
                 error: true,
                 message: error.message,
@@ -135,21 +135,21 @@ class ATSScanner {
 
         // Run formatting checks (10 checks)
         if (this.formattingChecks) {
-            console.log('Running formatting checks...');
+            if (typeof logger !== 'undefined') logger.info('Running formatting checks...');
             const formattingResults = this.formattingChecks.runAll(resumeData, options);
             allResults.push(...formattingResults);
         }
 
         // Run structure checks (10 checks)
         if (this.structureChecks) {
-            console.log('Running structure checks...');
+            if (typeof logger !== 'undefined') logger.info('Running structure checks...');
             const structureResults = this.structureChecks.runAll(resumeData, options);
             allResults.push(...structureResults);
         }
 
         // Run content checks (10 checks)
         if (this.contentChecks) {
-            console.log('Running content checks...');
+            if (typeof logger !== 'undefined') logger.info('Running content checks...');
             const contentResults = this.contentChecks.runAll(resumeData, options);
             allResults.push(...contentResults);
         }
@@ -212,7 +212,7 @@ class ATSScanner {
      * Quick scan (run subset of critical checks only)
      */
     async quickScan(resumeData, options = {}) {
-        console.log('⚡ Running Quick Scan (critical checks only)...');
+        if (typeof logger !== 'undefined') logger.info('⚡ Running Quick Scan (critical checks only)...');
 
         const criticalChecks = [
             'noTables',
@@ -250,7 +250,7 @@ class ATSScanner {
      * Compare two resumes
      */
     async compareResumes(resume1, resume2, options = {}) {
-        console.log('📊 Comparing two resumes...');
+        if (typeof logger !== 'undefined') logger.info('📊 Comparing two resumes...');
 
         const [result1, result2] = await Promise.all([
             this.scan(resume1, { ...options, label: 'Resume A' }),
@@ -444,7 +444,7 @@ class ATSScanner {
 
             localStorage.setItem('resumate_scan_history', JSON.stringify(trimmed));
         } catch (error) {
-            console.error('Failed to save scan history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to save scan history:', error);
         }
     }
 
@@ -456,7 +456,7 @@ class ATSScanner {
             const history = localStorage.getItem('resumate_scan_history');
             return history ? JSON.parse(history) : [];
         } catch (error) {
-            console.error('Failed to load scan history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load scan history:', error);
             return [];
         }
     }
@@ -547,5 +547,5 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 // Log initialization
-console.log('✨ ATS Scanner v2 initialized');
-console.log(`📋 ${atsScanner.totalChecks} checks available`);
+if (typeof logger !== 'undefined') logger.info('✨ ATS Scanner v2 initialized');
+if (typeof logger !== 'undefined') logger.info(`📋 ${atsScanner.totalChecks} checks available`);

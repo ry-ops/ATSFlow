@@ -44,7 +44,7 @@ class LinkedInParser {
                 profile
             };
         } catch (error) {
-            console.error('LinkedIn PDF parsing error:', error);
+            if (typeof logger !== 'undefined') logger.error('LinkedIn PDF parsing error:', error);
             return {
                 success: false,
                 error: error.message

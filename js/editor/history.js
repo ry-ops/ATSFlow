@@ -33,7 +33,7 @@ class HistoryManager {
         // Listen to state changes
         this.setupStateListeners();
 
-        console.log('History manager initialized');
+        if (typeof logger !== 'undefined') logger.info('History manager initialized');
     }
 
     /**
@@ -63,7 +63,7 @@ class HistoryManager {
             }
         });
 
-        console.log('Keyboard shortcuts registered: Cmd+Z (undo), Cmd+Shift+Z (redo)');
+        if (typeof logger !== 'undefined') logger.info('Keyboard shortcuts registered: Cmd+Z (undo), Cmd+Shift+Z (redo)');
     }
 
     /**
@@ -126,7 +126,7 @@ class HistoryManager {
             redoCount: this.redoStack.length
         });
 
-        console.log('State saved to history. Stack size:', this.undoStack.length);
+        if (typeof logger !== 'undefined') logger.info('State saved to history. Stack size:', this.undoStack.length);
     }
 
     /**
@@ -151,7 +151,7 @@ class HistoryManager {
      */
     undo() {
         if (!this.canUndo()) {
-            console.log('Nothing to undo');
+            if (typeof logger !== 'undefined') logger.info('Nothing to undo');
             return false;
         }
 
@@ -178,7 +178,7 @@ class HistoryManager {
             redoCount: this.redoStack.length
         });
 
-        console.log('Undo performed. Undo stack:', this.undoStack.length, 'Redo stack:', this.redoStack.length);
+        if (typeof logger !== 'undefined') logger.info('Undo performed. Undo stack:', this.undoStack.length, 'Redo stack:', this.redoStack.length);
         return true;
     }
 
@@ -187,7 +187,7 @@ class HistoryManager {
      */
     redo() {
         if (!this.canRedo()) {
-            console.log('Nothing to redo');
+            if (typeof logger !== 'undefined') logger.info('Nothing to redo');
             return false;
         }
 
@@ -214,7 +214,7 @@ class HistoryManager {
             redoCount: this.redoStack.length
         });
 
-        console.log('Redo performed. Undo stack:', this.undoStack.length, 'Redo stack:', this.redoStack.length);
+        if (typeof logger !== 'undefined') logger.info('Redo performed. Undo stack:', this.undoStack.length, 'Redo stack:', this.redoStack.length);
         return true;
     }
 
@@ -233,7 +233,7 @@ class HistoryManager {
         // Emit restoration event
         this.state.emit('stateRestored', restoredState);
 
-        console.log('State restored from history');
+        if (typeof logger !== 'undefined') logger.info('State restored from history');
     }
 
     /**
@@ -285,7 +285,7 @@ class HistoryManager {
         this.redoStack = [];
         this.persistHistory();
         this.emit('historyCleared');
-        console.log('History cleared');
+        if (typeof logger !== 'undefined') logger.info('History cleared');
     }
 
     /**
@@ -301,7 +301,7 @@ class HistoryManager {
 
             localStorage.setItem('resumate_history', JSON.stringify(historyData));
         } catch (error) {
-            console.error('Failed to persist history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to persist history:', error);
 
             // If storage is full, clear old states
             if (error.name === 'QuotaExceededError') {
@@ -322,10 +322,10 @@ class HistoryManager {
                 this.undoStack = historyData.undoStack || [];
                 this.redoStack = historyData.redoStack || [];
 
-                console.log('History loaded from localStorage. Undo:', this.undoStack.length, 'Redo:', this.redoStack.length);
+                if (typeof logger !== 'undefined') logger.info('History loaded from localStorage. Undo:', this.undoStack.length, 'Redo:', this.redoStack.length);
             }
         } catch (error) {
-            console.error('Failed to load history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load history:', error);
             this.undoStack = [];
             this.redoStack = [];
         }
@@ -343,7 +343,7 @@ class HistoryManager {
         }
 
         this.redoStack = [];
-        console.log('Old states cleared. Keeping', keepCount, 'most recent states');
+        if (typeof logger !== 'undefined') logger.info('Old states cleared. Keeping', keepCount, 'most recent states');
     }
 
     /**
@@ -374,7 +374,7 @@ class HistoryManager {
                 try {
                     callback(data);
                 } catch (error) {
-                    console.error(`Error in history listener for ${event}:`, error);
+                    if (typeof logger !== 'undefined') logger.error(`Error in history listener for ${event}:`, error);
                 }
             });
         }
@@ -404,10 +404,10 @@ class HistoryManager {
             this.persistHistory();
             this.emit('historyImported');
 
-            console.log('History imported successfully');
+            if (typeof logger !== 'undefined') logger.info('History imported successfully');
             return true;
         } catch (error) {
-            console.error('Failed to import history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to import history:', error);
             return false;
         }
     }
@@ -429,7 +429,7 @@ class HistoryManager {
      */
     jumpToState(index) {
         if (index < 0 || index >= this.undoStack.length) {
-            console.error('Invalid state index:', index);
+            if (typeof logger !== 'undefined') logger.error('Invalid state index:', index);
             return false;
         }
 
@@ -458,7 +458,7 @@ class HistoryManager {
     destroy() {
         clearTimeout(this.saveDebounceTimer);
         this.listeners = {};
-        console.log('History manager destroyed');
+        if (typeof logger !== 'undefined') logger.info('History manager destroyed');
     }
 }
 

@@ -228,7 +228,7 @@ class VersionMerger {
                 appliedChanges.push(...result.applied);
                 skippedChanges.push(...result.skipped);
             } catch (error) {
-                console.error(`Error merging section ${sectionName}:`, error);
+                if (typeof logger !== 'undefined') logger.error(`Error merging section ${sectionName}:`, error);
                 skippedChanges.push({
                     section: sectionName,
                     reason: error.message

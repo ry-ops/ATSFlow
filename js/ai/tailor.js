@@ -25,7 +25,7 @@ class ResumeTailor {
      * @returns {Promise<Object>} Tailoring suggestions with before/after
      */
     async generateSuggestions(resumeData, jobData, matchData, apiKey) {
-        console.log('[Tailor] Generating tailoring suggestions...');
+        if (typeof logger !== 'undefined') logger.info('[Tailor] Generating tailoring suggestions...');
 
         try {
             // Build comprehensive prompt for Claude
@@ -49,11 +49,11 @@ class ResumeTailor {
                 baseResume: JSON.parse(JSON.stringify(resumeData)) // Deep copy
             };
 
-            console.log(`[Tailor] Generated ${suggestions.length} suggestions`);
+            if (typeof logger !== 'undefined') logger.info(`[Tailor] Generated ${suggestions.length} suggestions`);
             return tailoringSession;
 
         } catch (error) {
-            console.error('[Tailor] Error generating suggestions:', error);
+            if (typeof logger !== 'undefined') logger.error('[Tailor] Error generating suggestions:', error);
             throw new Error('Failed to generate tailoring suggestions: ' + error.message);
         }
     }
@@ -162,7 +162,7 @@ Provide 5-10 high-impact suggestions. Return ONLY the JSON object.`;
             }));
 
         } catch (error) {
-            console.error('[Tailor] Failed to parse suggestions JSON:', error);
+            if (typeof logger !== 'undefined') logger.error('[Tailor] Failed to parse suggestions JSON:', error);
             // Return basic suggestions based on gaps
             return this.generateBasicSuggestions(resumeData, jobData);
         }
@@ -225,7 +225,7 @@ Provide 5-10 high-impact suggestions. Return ONLY the JSON object.`;
      * @returns {Object} Updated resume data
      */
     applySuggestion(resumeData, suggestion) {
-        console.log(`[Tailor] Applying suggestion: ${suggestion.id}`);
+        if (typeof logger !== 'undefined') logger.info(`[Tailor] Applying suggestion: ${suggestion.id}`);
 
         // Deep copy to avoid mutation
         const updated = JSON.parse(JSON.stringify(resumeData));
@@ -234,7 +234,7 @@ Provide 5-10 high-impact suggestions. Return ONLY the JSON object.`;
         const section = updated.sections?.find(s => s.id === suggestion.sectionId);
 
         if (!section) {
-            console.warn('[Tailor] Section not found:', suggestion.sectionId);
+            if (typeof logger !== 'undefined') logger.warn('[Tailor] Section not found:', suggestion.sectionId);
             return updated;
         }
 
@@ -271,7 +271,7 @@ Provide 5-10 high-impact suggestions. Return ONLY the JSON object.`;
                 break;
 
             default:
-                console.warn('[Tailor] Unknown suggestion type:', suggestion.type);
+                if (typeof logger !== 'undefined') logger.warn('[Tailor] Unknown suggestion type:', suggestion.type);
         }
 
         // Mark suggestion as applied
@@ -288,7 +288,7 @@ Provide 5-10 high-impact suggestions. Return ONLY the JSON object.`;
      * @returns {Object} Updated resume data
      */
     applyAllSuggestions(resumeData, suggestions) {
-        console.log(`[Tailor] Applying ${suggestions.length} suggestions...`);
+        if (typeof logger !== 'undefined') logger.info(`[Tailor] Applying ${suggestions.length} suggestions...`);
 
         let updated = resumeData;
 
@@ -296,7 +296,7 @@ Provide 5-10 high-impact suggestions. Return ONLY the JSON object.`;
             updated = this.applySuggestion(updated, suggestion);
         });
 
-        console.log('[Tailor] All suggestions applied');
+        if (typeof logger !== 'undefined') logger.info('[Tailor] All suggestions applied');
         return updated;
     }
 

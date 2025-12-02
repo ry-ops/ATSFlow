@@ -277,7 +277,7 @@ class LinkedInExport {
             await navigator.clipboard.writeText(text);
             return true;
         } catch (error) {
-            console.error('Failed to copy to clipboard:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to copy to clipboard:', error);
             // Fallback method
             return this._fallbackCopyToClipboard(text);
         }
@@ -344,7 +344,7 @@ class LinkedInExport {
             document.body.removeChild(textarea);
             return true;
         } catch (error) {
-            console.error('Fallback copy failed:', error);
+            if (typeof logger !== 'undefined') logger.error('Fallback copy failed:', error);
             document.body.removeChild(textarea);
             return false;
         }

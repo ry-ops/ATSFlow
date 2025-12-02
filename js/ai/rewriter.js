@@ -9,7 +9,7 @@ class ContentRewriter {
     constructor() {
         this.generator = typeof aiGenerator !== 'undefined' ? aiGenerator : null;
         if (!this.generator) {
-            console.warn('AIGenerator not found. Make sure generator.js is loaded first.');
+            if (typeof logger !== 'undefined') logger.warn('AIGenerator not found. Make sure generator.js is loaded first.');
         }
     }
 
@@ -46,7 +46,7 @@ class ContentRewriter {
                 count: expanded.length
             };
         } catch (error) {
-            console.error('Error improving bullet:', error);
+            if (typeof logger !== 'undefined') logger.error('Error improving bullet:', error);
             throw new Error(`Failed to improve bullet point: ${error.message}`);
         }
     }
@@ -68,7 +68,7 @@ class ContentRewriter {
                 bold: result.bold
             };
         } catch (error) {
-            console.error('Error strengthening content:', error);
+            if (typeof logger !== 'undefined') logger.error('Error strengthening content:', error);
             throw new Error(`Failed to strengthen content: ${error.message}`);
         }
     }
@@ -94,7 +94,7 @@ class ContentRewriter {
                 count: quantified.length
             };
         } catch (error) {
-            console.error('Error adding metrics:', error);
+            if (typeof logger !== 'undefined') logger.error('Error adding metrics:', error);
             throw new Error(`Failed to add metrics: ${error.message}`);
         }
     }
@@ -123,7 +123,7 @@ class ContentRewriter {
                 currentIndustry
             };
         } catch (error) {
-            console.error('Error adapting for industry:', error);
+            if (typeof logger !== 'undefined') logger.error('Error adapting for industry:', error);
             throw new Error(`Failed to adapt for industry: ${error.message}`);
         }
     }
@@ -149,7 +149,7 @@ class ContentRewriter {
                 count: verbs.length
             };
         } catch (error) {
-            console.error('Error getting action verbs:', error);
+            if (typeof logger !== 'undefined') logger.error('Error getting action verbs:', error);
             throw new Error(`Failed to get action verbs: ${error.message}`);
         }
     }
@@ -176,7 +176,7 @@ class ContentRewriter {
                 keywords
             };
         } catch (error) {
-            console.error('Error optimizing for ATS:', error);
+            if (typeof logger !== 'undefined') logger.error('Error optimizing for ATS:', error);
             throw new Error(`Failed to optimize for ATS: ${error.message}`);
         }
     }
@@ -206,7 +206,7 @@ class ContentRewriter {
 
             return summary;
         } catch (error) {
-            console.error('Error generating summary:', error);
+            if (typeof logger !== 'undefined') logger.error('Error generating summary:', error);
             throw new Error(`Failed to generate summary: ${error.message}`);
         }
     }
@@ -232,7 +232,7 @@ class ContentRewriter {
 
             return keywords;
         } catch (error) {
-            console.error('Error analyzing job keywords:', error);
+            if (typeof logger !== 'undefined') logger.error('Error analyzing job keywords:', error);
             throw new Error(`Failed to analyze job keywords: ${error.message}`);
         }
     }
@@ -265,7 +265,7 @@ class ContentRewriter {
                 company
             };
         } catch (error) {
-            console.error('Error converting to bullets:', error);
+            if (typeof logger !== 'undefined') logger.error('Error converting to bullets:', error);
             throw new Error(`Failed to convert to bullets: ${error.message}`);
         }
     }
@@ -360,7 +360,7 @@ class ContentRewriter {
 
             return improvements;
         } catch (error) {
-            console.error('Error improving section:', error);
+            if (typeof logger !== 'undefined') logger.error('Error improving section:', error);
             throw new Error(`Failed to improve section: ${error.message}`);
         }
     }
@@ -409,7 +409,7 @@ class ContentRewriter {
                 suggestedVerbs: verbs
             };
         } catch (error) {
-            console.error('Error fixing weak verbs:', error);
+            if (typeof logger !== 'undefined') logger.error('Error fixing weak verbs:', error);
             throw new Error(`Failed to fix weak verbs: ${error.message}`);
         }
     }

@@ -32,7 +32,7 @@ class ResumeBuilder {
      * Initialize the builder
      */
     initialize() {
-        console.log('Initializing Resume Builder...');
+        if (typeof logger !== 'undefined') logger.info('Initializing Resume Builder...');
 
         // Initialize state management
         this.state = resumeState; // Use singleton from state.js
@@ -64,7 +64,7 @@ class ResumeBuilder {
         // Load initial data or create default resume
         this.loadOrCreateResume();
 
-        console.log('Resume Builder initialized successfully');
+        if (typeof logger !== 'undefined') logger.info('Resume Builder initialized successfully');
     }
 
     /**
@@ -90,6 +90,9 @@ class ResumeBuilder {
                         <h2 class="resume-title" contenteditable="true">My Resume</h2>
                     </div>
                     <div class="toolbar-right">
+                        <button class="btn-icon" id="template-btn" title="Change Template">
+                            <span>🎨</span> Template
+                        </button>
                         <button class="btn-icon" id="save-btn" title="Save">
                             <span>💾</span> Save
                         </button>
@@ -131,7 +134,7 @@ class ResumeBuilder {
         // Populate section palette
         this.populateSectionPalette();
 
-        console.log('UI setup complete');
+        if (typeof logger !== 'undefined') logger.info('UI setup complete');
     }
 
     /**
@@ -166,6 +169,10 @@ class ResumeBuilder {
 
         this.container.querySelector('#redo-btn').addEventListener('click', () => {
             this.history.redo();
+        });
+
+        this.container.querySelector('#template-btn').addEventListener('click', () => {
+            this.showTemplateSelector();
         });
 
         this.container.querySelector('#save-btn').addEventListener('click', () => {
@@ -223,7 +230,7 @@ class ResumeBuilder {
             this.updateHistoryButtons(stats);
         });
 
-        console.log('Event listeners attached');
+        if (typeof logger !== 'undefined') logger.info('Event listeners attached');
     }
 
     /**
@@ -268,14 +275,14 @@ class ResumeBuilder {
             const section = SectionManager.createSection(sectionType);
             this.state.addSection(section);
 
-            console.log('Section added:', sectionType);
+            if (typeof logger !== 'undefined') logger.info('Section added:', sectionType);
 
             // Save to history
             this.history.saveState();
 
             return section;
         } catch (error) {
-            console.error('Failed to add section:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to add section:', error);
             alert('Failed to add section: ' + error.message);
             return null;
         }
@@ -295,7 +302,7 @@ class ResumeBuilder {
         if (confirm('Are you sure you want to remove this section?')) {
             this.state.removeSection(sectionId);
             this.history.saveState();
-            console.log('Section removed:', sectionId);
+            if (typeof logger !== 'undefined') logger.info('Section removed:', sectionId);
         }
     }
 
@@ -328,7 +335,7 @@ class ResumeBuilder {
             this.dragDrop.refresh(this.sectionsContainer);
         }
 
-        console.log('Sections rendered:', sections.length);
+        if (typeof logger !== 'undefined') logger.info('Sections rendered:', sections.length);
     }
 
     /**
@@ -440,7 +447,7 @@ class ResumeBuilder {
 
         // This would open a modal/form to edit the section
         // For now, just log
-        console.log('Edit section:', sectionId, section);
+        if (typeof logger !== 'undefined') logger.info('Edit section:', sectionId, section);
         alert('Section editing UI will be implemented by Worker 2 (Preview Engine)');
     }
 
@@ -453,6 +460,21 @@ class ResumeBuilder {
     }
 
     /**
+     * Show template selector modal
+     */
+    showTemplateSelector() {
+        if (window.TemplateSelector) {
+            window.TemplateSelector.showModal((templateId) => {
+                if (typeof logger !== 'undefined') logger.info('Template selected:', templateId);
+                // Template is already applied by the selector
+            });
+        } else {
+            alert('Template selector not available. Please check if the template system is loaded.');
+            if (typeof logger !== 'undefined') logger.error('TemplateSelector not found');
+        }
+    }
+
+    /**
      * Save resume
      */
     saveResume() {
@@ -460,10 +482,10 @@ class ResumeBuilder {
 
         if (success) {
             alert('Resume saved successfully!');
-            console.log('Resume saved');
+            if (typeof logger !== 'undefined') logger.info('Resume saved');
         } else {
             alert('Failed to save resume. Please try again.');
-            console.error('Resume save failed');
+            if (typeof logger !== 'undefined') logger.error('Resume save failed');
         }
     }
 
@@ -482,7 +504,7 @@ class ResumeBuilder {
 
         URL.revokeObjectURL(url);
 
-        console.log('Resume exported');
+        if (typeof logger !== 'undefined') logger.info('Resume exported');
     }
 
     /**
@@ -494,7 +516,7 @@ class ResumeBuilder {
 
         this.state.setEditorMode(newMode);
 
-        console.log('Preview mode toggled:', newMode);
+        if (typeof logger !== 'undefined') logger.info('Preview mode toggled:', newMode);
         alert('Preview mode will be implemented by Worker 2 (Preview Engine)');
     }
 
@@ -536,13 +558,13 @@ class ResumeBuilder {
             if (success) {
                 this.renderSections();
                 this.history.saveState();
-                console.log('Resume imported successfully');
+                if (typeof logger !== 'undefined') logger.info('Resume imported successfully');
                 return true;
             }
 
             return false;
         } catch (error) {
-            console.error('Failed to import resume:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to import resume:', error);
             return false;
         }
     }
@@ -565,7 +587,7 @@ class ResumeBuilder {
 
         this.container.innerHTML = '';
 
-        console.log('Resume Builder destroyed');
+        if (typeof logger !== 'undefined') logger.info('Resume Builder destroyed');
     }
 }
 

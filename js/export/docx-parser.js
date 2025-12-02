@@ -35,7 +35,7 @@ async function parseDOCX(docxBuffer) {
         };
 
     } catch (error) {
-        console.error('DOCX parsing error:', error);
+        if (typeof logger !== 'undefined') logger.error('DOCX parsing error:', error);
         return {
             success: false,
             error: error.message,

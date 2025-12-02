@@ -28,11 +28,11 @@ class TrackerStorage {
   migrate(fromVersion) {
     if (!fromVersion) {
       // First time initialization
-      console.log('Initializing tracker storage');
+      if (typeof logger !== 'undefined') logger.info('Initializing tracker storage');
       return;
     }
     // Add migration logic here for future versions
-    console.log(`Migrating from version ${fromVersion} to ${this.CURRENT_VERSION}`);
+    if (typeof logger !== 'undefined') logger.info(`Migrating from version ${fromVersion} to ${this.CURRENT_VERSION}`);
   }
 
   /**
@@ -43,7 +43,7 @@ class TrackerStorage {
       const data = localStorage.getItem(this.STORAGE_KEY);
       return data ? JSON.parse(data) : [];
     } catch (error) {
-      console.error('Error loading applications:', error);
+      if (typeof logger !== 'undefined') logger.error('Error loading applications:', error);
       return [];
     }
   }
@@ -64,7 +64,7 @@ class TrackerStorage {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(applications));
       return true;
     } catch (error) {
-      console.error('Error saving applications:', error);
+      if (typeof logger !== 'undefined') logger.error('Error saving applications:', error);
       return false;
     }
   }
@@ -105,7 +105,7 @@ class TrackerStorage {
     const index = applications.findIndex(app => app.id === id);
 
     if (index === -1) {
-      console.error(`Application ${id} not found`);
+      if (typeof logger !== 'undefined') logger.error(`Application ${id} not found`);
       return null;
     }
 
@@ -136,7 +136,7 @@ class TrackerStorage {
     const filtered = applications.filter(app => app.id !== id);
 
     if (filtered.length === applications.length) {
-      console.error(`Application ${id} not found`);
+      if (typeof logger !== 'undefined') logger.error(`Application ${id} not found`);
       return false;
     }
 
@@ -330,7 +330,7 @@ class TrackerStorage {
       this.saveAll(data.applications);
       return { success: true, count: data.applications.length };
     } catch (error) {
-      console.error('Error importing data:', error);
+      if (typeof logger !== 'undefined') logger.error('Error importing data:', error);
       return { success: false, error: error.message };
     }
   }

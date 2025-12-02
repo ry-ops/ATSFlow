@@ -18,11 +18,11 @@ class JobParser {
         // Check cache first
         const cacheKey = this.getCacheKey(jobDescription);
         if (this.cache.has(cacheKey)) {
-            console.log('[JobParser] Using cached job data');
+            if (typeof logger !== 'undefined') logger.info('[JobParser] Using cached job data');
             return this.cache.get(cacheKey);
         }
 
-        console.log('[JobParser] Parsing job description...');
+        if (typeof logger !== 'undefined') logger.info('[JobParser] Parsing job description...');
 
         const prompt = `Analyze this job description and extract key information. Return ONLY valid JSON without any markdown formatting or code blocks.
 
@@ -61,7 +61,7 @@ Important: Return ONLY the JSON object, no other text or formatting.`;
                 const jsonText = jsonMatch ? jsonMatch[0] : response;
                 parsed = JSON.parse(jsonText);
             } catch (parseError) {
-                console.error('[JobParser] Failed to parse JSON response:', parseError);
+                if (typeof logger !== 'undefined') logger.error('[JobParser] Failed to parse JSON response:', parseError);
                 // Return a basic structure
                 parsed = this.createFallbackParsedData(jobDescription);
             }
@@ -77,11 +77,11 @@ Important: Return ONLY the JSON object, no other text or formatting.`;
             // Cache the result
             this.cache.set(cacheKey, result);
 
-            console.log('[JobParser] Job description parsed successfully');
+            if (typeof logger !== 'undefined') logger.info('[JobParser] Job description parsed successfully');
             return result;
 
         } catch (error) {
-            console.error('[JobParser] Error parsing job description:', error);
+            if (typeof logger !== 'undefined') logger.error('[JobParser] Error parsing job description:', error);
             throw new Error('Failed to parse job description: ' + error.message);
         }
     }
@@ -196,7 +196,7 @@ Important: Return ONLY the JSON object, no other text or formatting.`;
      */
     clearCache() {
         this.cache.clear();
-        console.log('[JobParser] Cache cleared');
+        if (typeof logger !== 'undefined') logger.info('[JobParser] Cache cleared');
     }
 }
 

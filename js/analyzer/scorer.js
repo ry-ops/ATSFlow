@@ -516,7 +516,7 @@ class ATSScorer {
             localStorage.setItem('resumate_score_history', JSON.stringify(trimmedHistory));
             return true;
         } catch (error) {
-            console.error('Failed to save score to history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to save score to history:', error);
             return false;
         }
     }
@@ -529,7 +529,7 @@ class ATSScorer {
             const history = localStorage.getItem('resumate_score_history');
             return history ? JSON.parse(history) : [];
         } catch (error) {
-            console.error('Failed to load score history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load score history:', error);
             return [];
         }
     }
@@ -542,7 +542,7 @@ class ATSScorer {
             localStorage.removeItem('resumate_score_history');
             return true;
         } catch (error) {
-            console.error('Failed to clear score history:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to clear score history:', error);
             return false;
         }
     }

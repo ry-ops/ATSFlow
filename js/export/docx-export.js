@@ -87,7 +87,7 @@ class DOCXExporter {
 
             const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, UnderlineType } = docx;
 
-            console.log('[DOCXExporter] Generating DOCX document...');
+            if (typeof logger !== 'undefined') logger.info('[DOCXExporter] Generating DOCX document...');
 
             // Build document sections
             const sections = this.buildDocumentSections(resumeState, docx);
@@ -113,11 +113,11 @@ class DOCXExporter {
             // Generate blob
             const blob = await Packer.toBlob(doc);
 
-            console.log('[DOCXExporter] DOCX generated successfully');
+            if (typeof logger !== 'undefined') logger.info('[DOCXExporter] DOCX generated successfully');
 
             return blob;
         } catch (error) {
-            console.error('[DOCXExporter] Export failed:', error);
+            if (typeof logger !== 'undefined') logger.error('[DOCXExporter] Export failed:', error);
             throw new Error(`DOCX export failed: ${error.message}`);
         }
     }

@@ -110,7 +110,7 @@ class DragDropManager {
         // Create drag image
         this.createDragImage(e, element);
 
-        console.log('Drag started:', sectionId);
+        if (typeof logger !== 'undefined') logger.info('Drag started:', sectionId);
     }
 
     /**
@@ -233,7 +233,7 @@ class DragDropManager {
         const targetIndex = sections.findIndex(s => s.id === targetId);
 
         if (draggedIndex === -1 || targetIndex === -1) {
-            console.error('Section not found:', { draggedId, targetId });
+            if (typeof logger !== 'undefined') logger.error('Section not found:', { draggedId, targetId });
             return;
         }
 
@@ -254,7 +254,7 @@ class DragDropManager {
         // Reorder
         this.state.reorderSections(draggedIndex, newIndex);
 
-        console.log('Sections reordered:', {
+        if (typeof logger !== 'undefined') logger.info('Sections reordered:', {
             from: draggedIndex,
             to: newIndex,
             draggedId,

@@ -363,7 +363,7 @@ class TemplateRegistry {
         }
 
         this.templates.set(template.id, template);
-        console.log(`Template '${template.id}' registered`);
+        if (typeof logger !== 'undefined') logger.info(`Template '${template.id}' registered`);
     }
 
     /**

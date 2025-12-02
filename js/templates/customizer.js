@@ -136,7 +136,7 @@ class TemplateCustomizer {
     applyColorPreset(presetName) {
         const preset = this.presets.colors[presetName];
         if (!preset) {
-            console.error(`Color preset '${presetName}' not found`);
+            if (typeof logger !== 'undefined') logger.error(`Color preset '${presetName}' not found`);
             return false;
         }
 
@@ -164,7 +164,7 @@ class TemplateCustomizer {
     applyTypographyPreset(presetName) {
         const preset = this.presets.typography[presetName];
         if (!preset) {
-            console.error(`Typography preset '${presetName}' not found`);
+            if (typeof logger !== 'undefined') logger.error(`Typography preset '${presetName}' not found`);
             return false;
         }
 
@@ -192,7 +192,7 @@ class TemplateCustomizer {
     applySpacingPreset(presetName) {
         const preset = this.presets.spacing[presetName];
         if (!preset) {
-            console.error(`Spacing preset '${presetName}' not found`);
+            if (typeof logger !== 'undefined') logger.error(`Spacing preset '${presetName}' not found`);
             return false;
         }
 
@@ -206,7 +206,7 @@ class TemplateCustomizer {
      */
     setPageSize(size) {
         if (!['a4', 'letter'].includes(size)) {
-            console.error('Invalid page size. Use "a4" or "letter"');
+            if (typeof logger !== 'undefined') logger.error('Invalid page size. Use "a4" or "letter"');
             return false;
         }
 
@@ -281,7 +281,7 @@ class TemplateCustomizer {
      */
     createCustomPreset(type, name, values) {
         if (!this.presets[type]) {
-            console.error(`Invalid preset type: ${type}`);
+            if (typeof logger !== 'undefined') logger.error(`Invalid preset type: ${type}`);
             return false;
         }
 
@@ -298,7 +298,7 @@ class TemplateCustomizer {
      */
     deleteCustomPreset(type, name) {
         if (!this.presets[type] || !this.presets[type][name]) {
-            console.error(`Preset not found: ${type}.${name}`);
+            if (typeof logger !== 'undefined') logger.error(`Preset not found: ${type}.${name}`);
             return false;
         }
 
@@ -345,7 +345,7 @@ class TemplateCustomizer {
                 }
             });
         } catch (error) {
-            console.error('Failed to load custom presets:', error);
+            if (typeof logger !== 'undefined') logger.error('Failed to load custom presets:', error);
         }
     }
 
@@ -385,7 +385,7 @@ class TemplateCustomizer {
      */
     importPreset(preset) {
         if (!preset.customizations) {
-            console.error('Invalid preset format');
+            if (typeof logger !== 'undefined') logger.error('Invalid preset format');
             return false;
         }
 
