@@ -109,15 +109,17 @@
                 <div class="step-header">
                     <h1 id="step-upload-title" class="step-title">
                         <span class="step-icon">📄</span>
-                        Upload Your Resume
+                        Upload Resume & Job Description
                     </h1>
                     <p class="step-description">
-                        Start by uploading your existing resume or paste your resume text below.
+                        Start by uploading your resume and adding the job description you're applying for.
                     </p>
                 </div>
 
                 <div class="step-content">
+                    <!-- Resume Input -->
                     <div class="card">
+                        <h2 style="margin-bottom: 1rem;">📄 Your Resume</h2>
                         <div class="input-group">
                             <label for="resume-file" class="file-upload-label">
                                 <span class="upload-icon">📎</span>
@@ -131,10 +133,45 @@
                             <textarea
                                 id="resume-text"
                                 placeholder="Paste your resume text here..."
-                                rows="12"
+                                rows="10"
                                 aria-describedby="resume-help"></textarea>
                             <small id="resume-help" class="help-text">
                                 Your resume data is processed securely and never stored permanently.
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Job Description Input -->
+                    <div class="card" style="margin-top: 2rem;">
+                        <h2 style="margin-bottom: 1rem;">💼 Job Description</h2>
+                        <div class="input-group">
+                            <div class="job-url-import">
+                                <label for="job-url">
+                                    🔗 Import from URL (LinkedIn, Indeed, etc.)
+                                </label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input
+                                        type="url"
+                                        id="job-url"
+                                        placeholder="https://linkedin.com/jobs/view/..."
+                                        style="flex: 1;">
+                                    <button type="button" id="import-job-btn" class="btn-secondary">
+                                        Import
+                                    </button>
+                                </div>
+                                <small id="job-url-status" style="margin-top: 0.5rem; display: block;"></small>
+                            </div>
+
+                            <div class="divider">OR</div>
+
+                            <label for="job-text" class="sr-only">Paste job description</label>
+                            <textarea
+                                id="job-text"
+                                placeholder="Paste the job description here..."
+                                rows="8"
+                                aria-describedby="job-help"></textarea>
+                            <small id="job-help" class="help-text">
+                                Include the full job description for best resume analysis results.
                             </small>
                         </div>
                     </div>
@@ -551,6 +588,56 @@
                     if (workflowIntegration) {
                         workflowIntegration.handleResumeTextPaste(e.target.value);
                     }
+                    checkStep1Complete();
+                });
+            }
+
+            // Job description handlers (Step 1)
+            const jobUrlInput = document.getElementById('job-url');
+            const importJobBtn = document.getElementById('import-job-btn');
+
+            if (importJobBtn && jobUrlInput) {
+                importJobBtn.addEventListener('click', async () => {
+                    const url = jobUrlInput.value.trim();
+                    if (url && workflowIntegration) {
+                        try {
+                            await workflowIntegration.fetchJobFromURL(url);
+                            checkStep1Complete();
+                        } catch (error) {
+                            console.error('[Workflow] Job fetch error:', error);
+                        }
+                    }
+                });
+            }
+
+            const jobText = document.getElementById('job-text');
+            if (jobText) {
+                jobText.addEventListener('input', (e) => {
+                    if (workflowIntegration) {
+                        workflowIntegration.handleJobTextPaste(e.target.value);
+                    }
+                    checkStep1Complete();
+                });
+            }
+
+            // Enable Continue button when both resume and job description are present
+            function checkStep1Complete() {
+                const hasResume = (resumeFile && resumeFile.files.length > 0) ||
+                                (resumeText && resumeText.value.trim().length > 50);
+                const hasJob = (jobText && jobText.value.trim().length > 50) ||
+                             (jobUrlInput && jobUrlInput.value.trim().length > 10);
+
+                const continueBtn = document.getElementById('step-1-continue');
+                if (continueBtn) {
+                    continueBtn.disabled = !(hasResume && hasJob);
+                    console.log('[Workflow] Step 1 validation:', { hasResume, hasJob, enabled: hasResume && hasJob });
+                }
+            }
+
+            // Check on file upload
+            if (resumeFile) {
+                resumeFile.addEventListener('change', () => {
+                    setTimeout(checkStep1Complete, 500); // Wait for processing
                 });
             }
 
@@ -572,32 +659,7 @@
                 };
             }
 
-            // Step 3: Job tailoring
-            const jobUrlInput = document.getElementById('job-url');
-            const importJobBtn = jobUrlInput ? jobUrlInput.nextElementSibling : null;
-
-            if (importJobBtn) {
-                importJobBtn.addEventListener('click', async () => {
-                    const url = jobUrlInput.value.trim();
-                    if (url && workflowIntegration) {
-                        try {
-                            await workflowIntegration.fetchJobFromURL(url);
-                        } catch (error) {
-                            console.error('[Workflow] Job fetch error:', error);
-                        }
-                    }
-                });
-            }
-
-            const jobText = document.getElementById('job-text');
-            if (jobText) {
-                jobText.addEventListener('input', (e) => {
-                    if (workflowIntegration) {
-                        workflowIntegration.handleJobTextPaste(e.target.value);
-                    }
-                });
-            }
-
+            // Step 3: Job tailoring (job input now in Step 1)
             // Override the startTailoring method
             if (workflowUI) {
                 const originalStartTailoring = workflowUI.startTailoring.bind(workflowUI);
