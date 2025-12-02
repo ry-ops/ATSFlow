@@ -394,17 +394,51 @@ ${resumeText}
 JOB DESCRIPTION:
 ${jobText}
 
-Please provide your analysis in the following structure:
+IMPORTANT: Format your response EXACTLY as shown below, with numbered section headers followed by content. Use this exact structure:
 
-1. OVERALL MATCH SCORE (0-100): Provide a numerical score
-2. KEY STRENGTHS: List 3-5 strengths of this resume for this specific job
-3. GAPS AND CONCERNS: List 3-5 areas where the resume doesn't match the job requirements
-4. RECOMMENDATIONS: Provide 5-7 specific, actionable recommendations to improve the resume
-5. ATS COMPATIBILITY: Analyze ATS-friendliness and provide a score (0-100) with explanations
-6. KEYWORD ANALYSIS: List important keywords from the job description that are missing or underutilized in the resume
-7. FORMATTING SUGGESTIONS: Provide specific formatting improvements for better ATS parsing
+1. OVERALL MATCH SCORE
+Score: [0-100]
+[Brief explanation of the score]
 
-Format your response clearly with headers and bullet points.`;
+2. KEY STRENGTHS
+- [Strength 1]
+- [Strength 2]
+- [Strength 3]
+- [Strength 4]
+- [Strength 5]
+
+3. GAPS AND CONCERNS
+- [Gap 1]
+- [Gap 2]
+- [Gap 3]
+- [Gap 4]
+- [Gap 5]
+
+4. RECOMMENDATIONS
+- [Recommendation 1]
+- [Recommendation 2]
+- [Recommendation 3]
+- [Recommendation 4]
+- [Recommendation 5]
+
+5. ATS COMPATIBILITY
+Score: [0-100]
+- [Point 1]
+- [Point 2]
+- [Point 3]
+
+6. KEYWORD ANALYSIS
+Missing Keywords:
+- [Keyword 1]
+- [Keyword 2]
+- [Keyword 3]
+
+7. FORMATTING SUGGESTIONS
+- [Suggestion 1]
+- [Suggestion 2]
+- [Suggestion 3]
+
+Be specific and actionable in your feedback. Start each section with the numbered header exactly as shown above.`;
 
     try {
         const analysis = await callClaudeAPI(effectiveApiKey, prompt, 4096, 0.7);
