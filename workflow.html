@@ -910,13 +910,18 @@
                     return;
                 }
 
-                // Populate editor (left panel)
+                // Populate editor (left panel) - PLAIN TEXT for editing
                 const editor = document.getElementById('resume-editor');
                 if (editor) {
-                    // Format resume text as HTML for better display
-                    const formattedText = formatResumeAsHTML(resumeText);
-                    editor.innerHTML = formattedText;
-                    console.log('[Workflow] Editor populated with resume text');
+                    // Show plain text for easy editing
+                    editor.textContent = resumeText;
+                    editor.style.fontFamily = 'monospace';
+                    editor.style.fontSize = '14px';
+                    editor.style.lineHeight = '1.6';
+                    editor.style.padding = '1rem';
+                    editor.style.color = 'var(--text-color)';
+                    editor.style.whiteSpace = 'pre-wrap';
+                    console.log('[Workflow] Editor populated with plain text');
                 }
 
                 // Populate preview (right panel) - use resumePreview instance if available
@@ -932,6 +937,13 @@
                         </div>
                     `;
                     console.log('[Workflow] Preview populated (fallback method)');
+                }
+
+                // Apply default template (classic)
+                const templateSelect = document.getElementById('template-select');
+                if (templateSelect) {
+                    const defaultTemplate = templateSelect.value || 'classic';
+                    applyTemplateStyles(preview, defaultTemplate);
                 }
             }
 
@@ -982,6 +994,96 @@
                 }).join('\n');
 
                 return html;
+            }
+
+            // Step 4: Template selector
+            const templateSelect = document.getElementById('template-select');
+            if (templateSelect) {
+                templateSelect.addEventListener('change', (e) => {
+                    const template = e.target.value;
+                    console.log('[Workflow] Template changed to:', template);
+
+                    const preview = document.getElementById('resume-preview');
+                    if (preview) {
+                        // Remove existing template classes
+                        preview.classList.remove('template-classic', 'template-modern', 'template-creative');
+
+                        // Add new template class
+                        preview.classList.add(`template-${template}`);
+
+                        // Apply template-specific styles
+                        applyTemplateStyles(preview, template);
+                    }
+                });
+            }
+
+            // Apply template styles to preview
+            function applyTemplateStyles(preview, template) {
+                const resumeContent = preview.querySelector('.resume-content');
+                if (!resumeContent) return;
+
+                // Reset styles
+                resumeContent.style.cssText = 'padding: 2rem; max-width: 800px; margin: 0 auto;';
+
+                switch(template) {
+                    case 'classic':
+                        resumeContent.style.fontFamily = 'Georgia, serif';
+                        resumeContent.style.fontSize = '14px';
+                        resumeContent.style.lineHeight = '1.6';
+                        break;
+                    case 'modern':
+                        resumeContent.style.fontFamily = '-apple-system, BlinkMacSystemFont, sans-serif';
+                        resumeContent.style.fontSize = '15px';
+                        resumeContent.style.lineHeight = '1.7';
+                        resumeContent.style.letterSpacing = '0.01em';
+                        break;
+                    case 'creative':
+                        resumeContent.style.fontFamily = 'Arial, Helvetica, sans-serif';
+                        resumeContent.style.fontSize = '14px';
+                        resumeContent.style.lineHeight = '1.65';
+                        resumeContent.style.background = 'linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)';
+                        resumeContent.style.borderRadius = '8px';
+                        break;
+                }
+
+                console.log('[Workflow] Applied template:', template);
+            }
+
+            // Step 4 Continue button (Continue to Export)
+            const step4ContinueBtn = document.getElementById('step-4-continue');
+            if (step4ContinueBtn) {
+                step4ContinueBtn.addEventListener('click', () => {
+                    console.log('[Workflow] Step 4 Continue (to Export) clicked');
+
+                    const step4 = document.getElementById('step-edit');
+                    const step5 = document.getElementById('step-export');
+
+                    if (step4 && step5) {
+                        step4.classList.remove('active');
+                        step4.classList.add('locked');
+                        step4.setAttribute('aria-hidden', 'true');
+
+                        step5.classList.remove('locked');
+                        step5.classList.add('active');
+                        step5.removeAttribute('aria-hidden');
+
+                        // Update progress dots
+                        const dot4 = document.querySelector('[data-step="4"]');
+                        const dot5 = document.querySelector('[data-step="5"]');
+                        if (dot4) {
+                            dot4.classList.remove('active');
+                            dot4.classList.add('completed');
+                        }
+                        if (dot5) {
+                            dot5.classList.remove('locked');
+                            dot5.classList.add('active');
+                            dot5.setAttribute('aria-current', 'step');
+                        }
+
+                        // Scroll to top
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
             }
 
             // Step 2: Analysis
