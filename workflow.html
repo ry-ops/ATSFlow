@@ -662,10 +662,6 @@
             if (typeof WorkflowUI !== 'undefined') {
                 workflowUI = new WorkflowUI();
                 window.workflowUI = workflowUI;
-
-                // Override event handlers with backend integration
-                setupBackendIntegration();
-
                 workflowUI.initialize();
                 console.log('[Workflow] UI initialized');
             }
@@ -676,6 +672,9 @@
                 window.workflowIntegration = workflowIntegration;
                 await workflowIntegration.initialize();
                 console.log('[Workflow] Integration initialized');
+
+                // Setup backend integration AFTER WorkflowIntegration is initialized
+                setupBackendIntegration();
             }
 
             // Initialize export system
