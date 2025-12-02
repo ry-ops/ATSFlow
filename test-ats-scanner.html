@@ -173,6 +173,7 @@
 
             <div class="test-controls">
                 <select class="sample-selector" id="sampleSelect">
+                    <option value="myresume">📄 My Resume (from main page)</option>
                     <option value="good">Sample: Good Resume (Score ~85)</option>
                     <option value="average">Sample: Average Resume (Score ~65)</option>
                     <option value="poor">Sample: Poor Resume (Score ~40)</option>
@@ -388,11 +389,40 @@
 
         async function runFullScan() {
             const sampleType = document.getElementById('sampleSelect').value;
-            const resumeData = sampleResumes[sampleType];
+            let resumeData;
 
-            if (!resumeData) {
-                alert('Please select a valid sample resume');
-                return;
+            // Load from localStorage if "My Resume" is selected
+            if (sampleType === 'myresume') {
+                const lastAnalysisStr = localStorage.getItem('lastAnalysis');
+                if (!lastAnalysisStr) {
+                    alert('No resume found. Please analyze your resume on the main page first.');
+                    return;
+                }
+                try {
+                    const lastAnalysis = JSON.parse(lastAnalysisStr);
+                    if (!lastAnalysis.resumeText) {
+                        alert('No resume text found in saved data.');
+                        return;
+                    }
+                    // Convert text to resume data format expected by ATS scanner
+                    resumeData = {
+                        sections: [{
+                            id: 'text-1',
+                            type: 'summary',
+                            title: 'Resume',
+                            content: { text: lastAnalysis.resumeText }
+                        }]
+                    };
+                } catch (error) {
+                    alert('Error loading resume from localStorage: ' + error.message);
+                    return;
+                }
+            } else {
+                resumeData = sampleResumes[sampleType];
+                if (!resumeData) {
+                    alert('Please select a valid sample resume');
+                    return;
+                }
             }
 
             console.log('Starting full ATS scan...');
@@ -419,11 +449,40 @@
 
         async function runQuickScan() {
             const sampleType = document.getElementById('sampleSelect').value;
-            const resumeData = sampleResumes[sampleType];
+            let resumeData;
 
-            if (!resumeData) {
-                alert('Please select a valid sample resume');
-                return;
+            // Load from localStorage if "My Resume" is selected
+            if (sampleType === 'myresume') {
+                const lastAnalysisStr = localStorage.getItem('lastAnalysis');
+                if (!lastAnalysisStr) {
+                    alert('No resume found. Please analyze your resume on the main page first.');
+                    return;
+                }
+                try {
+                    const lastAnalysis = JSON.parse(lastAnalysisStr);
+                    if (!lastAnalysis.resumeText) {
+                        alert('No resume text found in saved data.');
+                        return;
+                    }
+                    // Convert text to resume data format expected by ATS scanner
+                    resumeData = {
+                        sections: [{
+                            id: 'text-1',
+                            type: 'summary',
+                            title: 'Resume',
+                            content: { text: lastAnalysis.resumeText }
+                        }]
+                    };
+                } catch (error) {
+                    alert('Error loading resume from localStorage: ' + error.message);
+                    return;
+                }
+            } else {
+                resumeData = sampleResumes[sampleType];
+                if (!resumeData) {
+                    alert('Please select a valid sample resume');
+                    return;
+                }
             }
 
             console.log('Starting quick scan...');

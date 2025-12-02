@@ -77,14 +77,20 @@
 
                     <!-- API Key Section -->
                     <section class="card">
-                        <h2>🔑 Claude AI API Key <span class="tooltip-trigger" data-tooltip="api-key">?</span></h2>
+                        <h2>🔑 Claude AI API Key
+                            <span id="api-status-indicator" class="api-status-badge" style="display: none;">
+                                <span class="status-dot"></span>
+                                <span class="status-text"></span>
+                            </span>
+                            <span class="tooltip-trigger" data-tooltip="api-key">?</span>
+                        </h2>
                         <div class="input-group">
                             <input
                                 type="password"
                                 id="api-key"
-                                placeholder="Enter your Claude API key (sk-ant-...)"
+                                placeholder="Enter your Claude API key (sk-ant-...) or leave empty to use server key"
                                 oninput="handleApiKeyInput()">
-                            <small class="help-text">
+                            <small class="help-text" id="api-help-text">
                                 Get your API key from <a href="https://console.anthropic.com/" target="_blank">Anthropic Console</a>.
                                 Your key is stored locally and never sent to our servers.
                             </small>
@@ -181,8 +187,54 @@
     <script src="js/editor/preview.js"></script>
     <script src="app.js"></script>
     <script>
+        // Check API key status on page load
+        async function checkApiKeyStatus() {
+            try {
+                const response = await fetch('/api/config');
+                const config = await response.json();
+
+                const indicator = document.getElementById('api-status-indicator');
+                const statusDot = indicator?.querySelector('.status-dot');
+                const statusText = indicator?.querySelector('.status-text');
+                const helpText = document.getElementById('api-help-text');
+                const apiKeyInput = document.getElementById('api-key');
+
+                console.log('[ResuMate] API Key Status:', config.message);
+                console.log('[ResuMate] Indicator element found:', !!indicator);
+                console.log('[ResuMate] Status dot found:', !!statusDot);
+                console.log('[ResuMate] Status text found:', !!statusText);
+
+                if (!indicator) {
+                    console.error('[ResuMate] API status indicator element not found! Hard refresh needed (Cmd+Shift+R)');
+                    return;
+                }
+
+                if (config.hasServerApiKey) {
+                    // Server has API key - show green indicator
+                    indicator.style.display = 'inline-flex';
+                    indicator.classList.remove('inactive');
+                    statusText.textContent = 'Server Key Active';
+                    if (helpText) helpText.innerHTML = '✅ Server API key is configured. You can use all AI features without entering your own key, or enter your own key to override.';
+                    if (apiKeyInput) apiKeyInput.placeholder = 'Optional: Enter your own Claude API key to override server key';
+                    console.log('[ResuMate] ✅ Green indicator activated');
+                } else {
+                    // No server key - show gray indicator
+                    indicator.style.display = 'inline-flex';
+                    indicator.classList.add('inactive');
+                    statusText.textContent = 'No Server Key';
+                    if (helpText) helpText.innerHTML = 'Get your API key from <a href="https://console.anthropic.com/" target="_blank">Anthropic Console</a>. Your key is stored locally and never sent to our servers.';
+                    if (apiKeyInput) apiKeyInput.placeholder = 'Enter your Claude API key (sk-ant-...)';
+                    console.log('[ResuMate] ⚪ Gray indicator activated');
+                }
+            } catch (error) {
+                console.error('[ResuMate] Failed to check API key status:', error);
+            }
+        }
+
         // Initialize preview system when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
+            // Check API key status first
+            checkApiKeyStatus();
             if (typeof PreviewController !== 'undefined' && typeof ResumeRenderer !== 'undefined') {
                 window.resumeRenderer = new ResumeRenderer();
                 window.previewController = new PreviewController(window.resumeRenderer);

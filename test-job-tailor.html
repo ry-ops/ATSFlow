@@ -315,14 +315,26 @@
         }
 
         async function analyzeTailoring() {
-            const apiKey = document.getElementById('apiKey').value.trim();
+            let apiKey = document.getElementById('apiKey').value.trim();
             const resumeDataRaw = document.getElementById('resumeData').value.trim();
             const jobDescription = document.getElementById('jobDescription').value.trim();
 
-            // Validation
+            // Validation - API key is optional if server has one
             if (!apiKey) {
-                showStatus('Please enter your Claude API key', 'error');
-                return;
+                // Check if server has API key configured
+                try {
+                    const response = await fetch('/api/config');
+                    const config = await response.json();
+                    if (!config.hasServerApiKey) {
+                        showStatus('Please enter your Claude API key or configure server key', 'error');
+                        return;
+                    }
+                    // Server has key, so we can proceed without client key
+                    apiKey = ''; // Will use server key
+                } catch (error) {
+                    showStatus('Please enter your Claude API key', 'error');
+                    return;
+                }
             }
 
             if (!resumeDataRaw) {
@@ -567,6 +579,60 @@ Responsibilities:
 - Participate in architecture decisions`;
 
             document.getElementById('jobDescription').value = sample;
+        }
+
+        // Initialize: Load data from localStorage
+        async function initializePage() {
+            try {
+                // 1. Load API key from localStorage or server config
+                const storedApiKey = localStorage.getItem('claude_api_key');
+                if (storedApiKey) {
+                    document.getElementById('apiKey').value = storedApiKey;
+                } else {
+                    // Check if server has API key
+                    try {
+                        const response = await fetch('/api/config');
+                        const config = await response.json();
+                        if (config.hasServerApiKey) {
+                            // Server has key, user doesn't need to enter one
+                            document.getElementById('apiKey').placeholder = 'Using server API key';
+                        }
+                    } catch (error) {
+                        console.warn('Could not check server API key:', error);
+                    }
+                }
+
+                // 2. Load resume and job description from lastAnalysis
+                const lastAnalysisStr = localStorage.getItem('lastAnalysis');
+                if (lastAnalysisStr) {
+                    try {
+                        const lastAnalysis = JSON.parse(lastAnalysisStr);
+
+                        // Populate resume data if available
+                        if (lastAnalysis.resumeText) {
+                            document.getElementById('resumeData').value = lastAnalysis.resumeText;
+                        }
+
+                        // Populate job description if available
+                        if (lastAnalysis.jobText) {
+                            document.getElementById('jobDescription').value = lastAnalysis.jobText;
+                        }
+
+                        console.log('[Job Tailor] Loaded resume and job description from localStorage');
+                    } catch (error) {
+                        console.error('[Job Tailor] Error parsing lastAnalysis:', error);
+                    }
+                }
+            } catch (error) {
+                console.error('[Job Tailor] Initialization error:', error);
+            }
+        }
+
+        // Run initialization when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage();
         }
     </script>
     <script src="js/navigation/loader.js"></script>

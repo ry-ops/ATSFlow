@@ -909,6 +909,71 @@ class OnboardingManager {
     }
 
     /**
+     * Reset all progress (clear localStorage)
+     */
+    resetProgress() {
+        // Reset all steps to incomplete
+        Object.keys(this.progressSteps).forEach(key => {
+            this.progressSteps[key].complete = false;
+        });
+
+        // Clear from localStorage
+        localStorage.removeItem('resumate_progress');
+
+        // Update the progress bar
+        this.updateProgressBar();
+
+        console.log('[Onboarding] Progress reset');
+    }
+
+    /**
+     * Add reset button to progress bar (for testing/development)
+     */
+    addResetButton() {
+        if (!this.progressElement) return;
+
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'progress-reset-btn';
+        resetBtn.innerHTML = '↻ Reset Progress';
+        resetBtn.title = 'Clear all progress';
+        resetBtn.style.cssText = `
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        `;
+
+        resetBtn.addEventListener('mouseover', () => {
+            resetBtn.style.background = 'rgba(255,255,255,0.1)';
+        });
+
+        resetBtn.addEventListener('mouseout', () => {
+            resetBtn.style.background = 'transparent';
+        });
+
+        resetBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm('Reset all progress? This will clear your current session.')) {
+                this.resetProgress();
+                // Also clear the inputs
+                const resumeText = document.getElementById('resume-text');
+                const jobText = document.getElementById('job-text');
+                if (resumeText) resumeText.value = '';
+                if (jobText) jobText.value = '';
+            }
+        });
+
+        this.progressElement.appendChild(resetBtn);
+    }
+
+    /**
      * Save progress
      */
     saveProgress() {
@@ -927,9 +992,29 @@ class OnboardingManager {
     }
 
     /**
+     * Check if server has API key configured
+     */
+    async checkServerApiKey() {
+        try {
+            const response = await fetch('/api/config');
+            const config = await response.json();
+
+            if (config.hasServerApiKey) {
+                console.log('[Onboarding] ✅ Server API key detected - marking step complete');
+                this.completeStep('apiKeySet');
+            }
+        } catch (error) {
+            console.error('[Onboarding] Failed to check server API key:', error);
+        }
+    }
+
+    /**
      * Attach listeners to track progress
      */
     attachProgressListeners() {
+        // Check for server API key on load
+        this.checkServerApiKey();
+
         // Resume input
         const resumeText = document.getElementById('resume-text');
         const resumeFile = document.getElementById('resume-file');
@@ -946,13 +1031,26 @@ class OnboardingManager {
             });
         }
 
-        // Job description
+        // Job description - text input
         const jobText = document.getElementById('job-text');
         if (jobText) {
             jobText.addEventListener('input', () => {
                 if (jobText.value.length > 50) {
                     this.completeStep('jobDescAdded');
                 }
+            });
+        }
+
+        // Job description - file upload
+        const jobFile = document.getElementById('job-file');
+        if (jobFile) {
+            jobFile.addEventListener('change', () => {
+                // Wait a bit for the file to be processed
+                setTimeout(() => {
+                    if (jobText && jobText.value.length > 50) {
+                        this.completeStep('jobDescAdded');
+                    }
+                }, 1000);
             });
         }
 
