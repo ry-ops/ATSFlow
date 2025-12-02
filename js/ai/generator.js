@@ -368,6 +368,203 @@ class AIGenerator {
             .map(item => item.trim())
             .filter(item => item.length > 0);
     }
+
+    /**
+     * Analyze resume against industry benchmarks (AI-powered)
+     * @param {Object} resumeData - Resume data
+     * @param {string} targetRole - Target role
+     * @param {string} industry - Target industry
+     * @returns {Promise<Object>} - Benchmark analysis
+     */
+    async analyzeBenchmark(resumeData, targetRole, industry) {
+        if (typeof AIPrompts === 'undefined') {
+            throw new Error('AIPrompts module not loaded');
+        }
+
+        // Extract relevant data from resume
+        const currentTitle = resumeData.title || resumeData.currentRole || '';
+        const yearsExperience = this._calculateYearsExperience(resumeData.experience || []);
+        const skills = this._extractSkills(resumeData);
+        const education = this._formatEducation(resumeData.education || []);
+        const resumeSummary = resumeData.summary || '';
+
+        const prompt = AIPrompts.analyzeBenchmark({
+            currentTitle,
+            targetRole,
+            industry,
+            yearsExperience,
+            skills,
+            education,
+            resumeSummary
+        });
+
+        const content = await this._makeRequest(prompt, {
+            maxTokens: 2048,
+            temperature: 0.6
+        });
+
+        // Parse JSON response
+        return this._parseJSON(content);
+    }
+
+    /**
+     * Generate career progression suggestions (AI-powered)
+     * @param {Object} background - Professional background
+     * @returns {Promise<Object>} - Career progression paths
+     */
+    async suggestCareerProgression(background) {
+        if (typeof AIPrompts === 'undefined') {
+            throw new Error('AIPrompts module not loaded');
+        }
+
+        const {
+            currentRole,
+            yearsExperience = 0,
+            skills = [],
+            industry,
+            education = ''
+        } = background;
+
+        const prompt = AIPrompts.careerProgression({
+            currentRole,
+            yearsExperience,
+            skills,
+            industry,
+            education
+        });
+
+        const content = await this._makeRequest(prompt, {
+            maxTokens: 3072,
+            temperature: 0.7
+        });
+
+        return this._parseJSON(content);
+    }
+
+    /**
+     * Analyze skills gap for career transition (AI-powered)
+     * @param {string[]} currentSkills - Current skills
+     * @param {string} currentRole - Current role
+     * @param {string} targetRole - Target role
+     * @param {string} industry - Target industry
+     * @returns {Promise<Object>} - Skills gap analysis
+     */
+    async analyzeSkillsGap(currentSkills, currentRole, targetRole, industry) {
+        if (typeof AIPrompts === 'undefined') {
+            throw new Error('AIPrompts module not loaded');
+        }
+
+        const prompt = AIPrompts.skillsGapAnalysis({
+            currentSkills,
+            currentRole,
+            targetRole,
+            industry
+        });
+
+        const content = await this._makeRequest(prompt, {
+            maxTokens: 3072,
+            temperature: 0.6
+        });
+
+        return this._parseJSON(content);
+    }
+
+    /**
+     * Calculate years of experience from work history
+     * @param {Array} experienceArray - Experience items
+     * @returns {number} - Years of experience
+     * @private
+     */
+    _calculateYearsExperience(experienceArray) {
+        if (!experienceArray || experienceArray.length === 0) return 0;
+
+        let totalMonths = 0;
+        const now = new Date();
+
+        experienceArray.forEach(exp => {
+            const startDate = exp.startDate ? new Date(exp.startDate) : null;
+            const endDate = exp.current ? now : (exp.endDate ? new Date(exp.endDate) : now);
+
+            if (startDate && endDate) {
+                const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+                              (endDate.getMonth() - startDate.getMonth());
+                totalMonths += Math.max(0, months);
+            }
+        });
+
+        return Math.floor(totalMonths / 12);
+    }
+
+    /**
+     * Extract skills from resume data
+     * @param {Object} resumeData - Resume data
+     * @returns {string[]} - Array of skills
+     * @private
+     */
+    _extractSkills(resumeData) {
+        const skills = [];
+
+        if (resumeData.skills) {
+            resumeData.skills.forEach(skill => {
+                if (typeof skill === 'string') {
+                    skills.push(skill);
+                } else if (skill.name) {
+                    skills.push(skill.name);
+                }
+            });
+        }
+
+        return skills;
+    }
+
+    /**
+     * Format education for prompt
+     * @param {Array} educationArray - Education items
+     * @returns {string} - Formatted education
+     * @private
+     */
+    _formatEducation(educationArray) {
+        if (!educationArray || educationArray.length === 0) return 'Not specified';
+
+        return educationArray
+            .map(edu => {
+                const degree = edu.degree || '';
+                const field = edu.field || '';
+                const school = edu.school || '';
+                return `${degree} ${field} from ${school}`.trim();
+            })
+            .join('; ');
+    }
+
+    /**
+     * Parse JSON from AI response
+     * @param {string} content - Content to parse
+     * @returns {Object} - Parsed JSON
+     * @private
+     */
+    _parseJSON(content) {
+        try {
+            // Remove markdown code blocks if present
+            let cleaned = content.trim();
+            cleaned = cleaned.replace(/```json\s*/g, '');
+            cleaned = cleaned.replace(/```\s*/g, '');
+            cleaned = cleaned.trim();
+
+            // Remove any leading/trailing text before first { and after last }
+            const firstBrace = cleaned.indexOf('{');
+            const lastBrace = cleaned.lastIndexOf('}');
+
+            if (firstBrace !== -1 && lastBrace !== -1) {
+                cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+            }
+
+            return JSON.parse(cleaned);
+        } catch (error) {
+            console.error('Failed to parse JSON:', error);
+            console.error('Content:', content);
+            throw new Error('Failed to parse AI response as JSON: ' + error.message);
+        }
+    }
 }
 
 // Create global instance

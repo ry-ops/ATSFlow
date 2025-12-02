@@ -668,6 +668,340 @@ Return as valid JSON:
 }
 
 Return ONLY valid JSON without markdown formatting.`;
+    },
+
+    /**
+     * Analyze resume against industry benchmarks
+     * @param {Object} params - Parameters for benchmark analysis
+     * @param {string} params.currentTitle - Current job title
+     * @param {string} params.targetRole - Target role
+     * @param {string} params.industry - Target industry
+     * @param {number} params.yearsExperience - Years of experience
+     * @param {string[]} params.skills - Current skills
+     * @param {string} params.education - Education background
+     * @param {string} params.resumeSummary - Brief resume summary
+     * @returns {string} - Claude API prompt
+     */
+    analyzeBenchmark: ({ currentTitle, targetRole, industry, yearsExperience, skills, education, resumeSummary }) => {
+        const skillsList = Array.isArray(skills) ? skills.join(', ') : skills;
+
+        return `Analyze this resume against industry benchmarks for a ${targetRole} in the ${industry} sector.
+
+Resume Summary:
+- Current Title: ${currentTitle}
+- Years Experience: ${yearsExperience}
+- Skills: ${skillsList}
+- Education: ${education}
+
+Additional Context:
+${resumeSummary}
+
+Provide comprehensive industry benchmark analysis:
+
+1. Industry Standard Comparison
+   - Where does this candidate rank (percentile: 0-100)?
+   - Compare skills coverage to typical ${targetRole} requirements
+   - Assess experience level appropriateness
+
+2. Role-Specific Strengths and Gaps
+   - What are the top 3 strengths for this role?
+   - What are the critical gaps?
+   - Which skills are above market expectations?
+   - Which skills are below market expectations?
+
+3. Missing Critical Skills
+   - Identify must-have skills for ${targetRole} that are missing
+   - Identify nice-to-have skills that would boost competitiveness
+   - Suggest emerging skills to future-proof career
+
+4. Achievement Quantification Assessment
+   - Are achievements properly quantified with metrics?
+   - What percentage of bullets should have numbers/metrics?
+   - Suggestions for adding quantification
+
+5. Resume Structure Assessment
+   - Is resume length appropriate for experience level?
+   - Are sections properly organized for this industry?
+   - Format recommendations for ${industry}
+
+6. Overall Competitiveness Score (0-100)
+   - Overall score with justification
+   - Breakdown by category (skills, experience, achievements, format)
+
+Return as structured JSON:
+{
+  "percentileRank": 75,
+  "competitivenessScore": 82,
+  "strengths": ["strength1", "strength2", "strength3"],
+  "gaps": ["gap1", "gap2", "gap3"],
+  "skillsAnalysis": {
+    "aboveExpectations": ["skill1", "skill2"],
+    "belowExpectations": ["skill1", "skill2"],
+    "missingCritical": ["skill1", "skill2"],
+    "missingValuable": ["skill1", "skill2"],
+    "emergingRecommended": ["skill1", "skill2"]
+  },
+  "achievementAnalysis": {
+    "quantificationRate": 60,
+    "expectedRate": 75,
+    "suggestions": ["suggestion1", "suggestion2"]
+  },
+  "structureAssessment": {
+    "lengthAppropriate": true,
+    "formatScore": 85,
+    "recommendations": ["rec1", "rec2"]
+  },
+  "scoreBreakdown": {
+    "skills": 80,
+    "experience": 85,
+    "achievements": 75,
+    "format": 90
+  },
+  "overallRecommendations": [
+    "Top recommendation 1",
+    "Top recommendation 2",
+    "Top recommendation 3"
+  ]
+}
+
+Return ONLY valid JSON without markdown formatting.`;
+    },
+
+    /**
+     * Generate career progression suggestions
+     * @param {Object} params - Parameters for career progression
+     * @param {string} params.currentRole - Current role
+     * @param {number} params.yearsExperience - Years of experience
+     * @param {string[]} params.skills - Key skills
+     * @param {string} params.industry - Industry
+     * @param {string} params.education - Education background
+     * @returns {string} - Claude API prompt
+     */
+    careerProgression: ({ currentRole, yearsExperience, skills, industry, education }) => {
+        const skillsList = Array.isArray(skills) ? skills.join(', ') : skills;
+
+        return `Based on this professional background, suggest optimal career progression paths:
+
+Current Role: ${currentRole}
+Years Experience: ${yearsExperience}
+Key Skills: ${skillsList}
+Industry: ${industry}
+Education: ${education}
+
+Provide comprehensive career progression analysis with 3 realistic next-step roles:
+
+For each role, include:
+1. Role title and justification (why this is a good fit)
+2. Timeline for transition (6mo, 1yr, 2yr)
+3. Type of progression (vertical promotion, lateral move, specialization, management)
+4. Skills to acquire
+5. Experience gaps to fill
+6. Certifications to pursue
+7. Estimated salary range
+8. Market demand assessment (high/medium/low)
+9. Difficulty of transition (easy/moderate/challenging)
+10. Key success factors
+
+Also provide:
+- Overall career trajectory assessment
+- Industry trends affecting these roles
+- Long-term (5-10 year) career possibilities
+
+Return as JSON:
+{
+  "careerPaths": [
+    {
+      "role": "Senior Software Engineer",
+      "justification": "Natural vertical progression with current skillset",
+      "timeline": {
+        "min": 6,
+        "max": 18,
+        "realistic": 12,
+        "unit": "months"
+      },
+      "type": "vertical",
+      "skillsToAcquire": ["System Design", "Team Leadership", "Architecture"],
+      "experienceGaps": [
+        {
+          "gap": "Leadership experience",
+          "recommendation": "Lead projects, mentor junior engineers"
+        }
+      ],
+      "certifications": [
+        {
+          "name": "AWS Solutions Architect",
+          "priority": "high",
+          "estimatedCost": "$300",
+          "timeToComplete": "2-3 months"
+        }
+      ],
+      "salary": {
+        "min": 130000,
+        "max": 180000,
+        "median": 155000,
+        "factors": ["Location", "Company size", "Specialization"]
+      },
+      "marketDemand": "very-high",
+      "difficulty": "moderate",
+      "successFactors": [
+        "Demonstrate technical leadership",
+        "Build strong track record of delivery",
+        "Develop mentoring skills"
+      ]
+    }
+  ],
+  "trajectoryAssessment": "Strong technical foundation with multiple paths available",
+  "industryTrends": [
+    "Increasing demand for cloud expertise",
+    "AI/ML integration becoming essential"
+  ],
+  "longTermPossibilities": [
+    "Staff Engineer (IC track)",
+    "Engineering Manager (Management track)",
+    "Solutions Architect (Specialization)"
+  ],
+  "recommendations": [
+    "Decide between IC and management track within 1-2 years",
+    "Build expertise in cloud technologies",
+    "Start taking on leadership opportunities"
+  ]
+}
+
+Return ONLY valid JSON without markdown formatting.`;
+    },
+
+    /**
+     * Analyze skills gap for career transition
+     * @param {Object} params - Parameters for skills gap analysis
+     * @param {string[]} params.currentSkills - Current skills
+     * @param {string} params.currentRole - Current role
+     * @param {string} params.targetRole - Target role
+     * @param {string} params.industry - Target industry
+     * @returns {string} - Claude API prompt
+     */
+    skillsGapAnalysis: ({ currentSkills, currentRole, targetRole, industry }) => {
+        const skillsList = Array.isArray(currentSkills) ? currentSkills.join(', ') : currentSkills;
+
+        return `Analyze skill gaps for transitioning from ${currentRole} to ${targetRole} in ${industry}:
+
+Current Skills: ${skillsList}
+Target Role: ${targetRole} in ${industry}
+
+Analyze the job market for ${targetRole} and provide:
+
+1. Critical Missing Skills (Must-Have)
+   - Skills absolutely required for the role
+   - Without these, application will likely be rejected
+   - Prioritized by importance
+
+2. Valuable Missing Skills (Nice-to-Have)
+   - Skills that boost competitiveness
+   - Not required but highly valued
+   - Differentiate from other candidates
+
+3. Transferable Skills to Emphasize
+   - Current skills that map well to target role
+   - Skills to highlight prominently on resume
+   - How to position these skills
+
+4. Learning Path Recommendations
+   - Suggested order to acquire skills
+   - Estimated time for each skill
+   - Learning resources (courses, certifications, books)
+   - Free vs. paid options
+
+5. Alternative Skills (Substitutes)
+   - Skills that could replace missing skills
+   - Technology alternatives (e.g., React vs Angular)
+   - When substitutes are acceptable
+
+6. Skills to De-emphasize or Remove
+   - Skills not relevant to target role
+   - Skills that might confuse or dilute message
+   - Legacy skills to minimize
+
+7. Skill Clusters
+   - Related skills that should be learned together
+   - Technology stacks for the role
+   - Complementary skill combinations
+
+Return as prioritized JSON:
+{
+  "criticalGaps": [
+    {
+      "skill": "Kubernetes",
+      "priority": "must-have",
+      "justification": "Required for 90% of job postings",
+      "learningTime": "4-6 weeks",
+      "resources": [
+        {
+          "type": "course",
+          "name": "Kubernetes for Developers",
+          "provider": "Coursera",
+          "cost": "$49",
+          "free": false
+        }
+      ]
+    }
+  ],
+  "valuableGaps": [
+    {
+      "skill": "GraphQL",
+      "priority": "nice-to-have",
+      "justification": "Growing adoption, sets you apart",
+      "learningTime": "2-3 weeks"
+    }
+  ],
+  "transferableSkills": [
+    {
+      "skill": "JavaScript",
+      "relevance": "high",
+      "howToPosition": "Emphasize modern framework experience (React/Vue)"
+    }
+  ],
+  "learningPath": {
+    "phase1": {
+      "duration": "1-2 months",
+      "skills": ["skill1", "skill2"],
+      "focus": "Critical foundation"
+    },
+    "phase2": {
+      "duration": "2-3 months",
+      "skills": ["skill3", "skill4"],
+      "focus": "Build competitiveness"
+    }
+  },
+  "alternatives": [
+    {
+      "missingSkill": "React",
+      "alternatives": ["Vue.js", "Angular"],
+      "acceptable": true,
+      "notes": "Any modern frontend framework acceptable"
+    }
+  ],
+  "toDeemphasize": [
+    {
+      "skill": "jQuery",
+      "reason": "Legacy technology, may signal outdated knowledge",
+      "action": "Remove or minimize"
+    }
+  ],
+  "skillClusters": [
+    {
+      "cluster": "Frontend Stack",
+      "skills": ["React", "TypeScript", "Webpack", "Redux"],
+      "importance": "Learn together for cohesive understanding"
+    }
+  ],
+  "readinessAssessment": {
+    "score": 65,
+    "level": "Developing",
+    "timeToReady": "3-4 months",
+    "topPriorities": ["Learn Kubernetes", "Build production projects", "Get certified"]
+  }
+}
+
+Return ONLY valid JSON without markdown formatting.`;
     }
 };
 

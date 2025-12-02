@@ -1,11 +1,170 @@
 /**
- * Application Tracker Analytics
- * Calculates statistics, trends, and visualizations
+ * Enhanced Application Tracker Analytics
+ * Calculates statistics, trends, visualizations, and advanced metrics
+ * Supports resume score tracking, keyword trends, template analytics
  */
 
 class TrackerAnalytics {
   constructor(storage) {
     this.storage = storage;
+    this.analyticsStorageKey = 'resumate_analytics_v1';
+    this.initializeAnalyticsData();
+  }
+
+  /**
+   * Initialize analytics data structure
+   */
+  initializeAnalyticsData() {
+    const stored = localStorage.getItem(this.analyticsStorageKey);
+    if (!stored) {
+      const initialData = {
+        resumeScores: [],
+        applications: [],
+        templates: {},
+        keywords: {},
+        exports: [],
+        lastUpdated: new Date().toISOString()
+      };
+      localStorage.setItem(this.analyticsStorageKey, JSON.stringify(initialData));
+    }
+  }
+
+  /**
+   * Get analytics data
+   */
+  getAnalyticsData() {
+    const stored = localStorage.getItem(this.analyticsStorageKey);
+    return stored ? JSON.parse(stored) : null;
+  }
+
+  /**
+   * Save analytics data
+   */
+  saveAnalyticsData(data) {
+    data.lastUpdated = new Date().toISOString();
+    localStorage.setItem(this.analyticsStorageKey, JSON.stringify(data));
+  }
+
+  /**
+   * Track resume score
+   */
+  trackResumeScore(atsScore, polishScore, templateId, keywords = []) {
+    const data = this.getAnalyticsData();
+    data.resumeScores.push({
+      date: new Date().toISOString(),
+      atsScore: atsScore || 0,
+      polishScore: polishScore || 0,
+      templateId: templateId || 'unknown',
+      keywords: keywords
+    });
+
+    // Update template stats
+    if (!data.templates[templateId]) {
+      data.templates[templateId] = { usageCount: 0, totalScore: 0, successRate: 0 };
+    }
+    data.templates[templateId].usageCount++;
+    data.templates[templateId].totalScore += atsScore;
+
+    // Update keyword trends
+    keywords.forEach(keyword => {
+      if (!data.keywords[keyword]) {
+        data.keywords[keyword] = { mentions: 0, trendScore: 1.0, lastSeen: null };
+      }
+      data.keywords[keyword].mentions++;
+      data.keywords[keyword].lastSeen = new Date().toISOString();
+    });
+
+    this.saveAnalyticsData(data);
+  }
+
+  /**
+   * Track export event
+   */
+  trackExport(format, templateId) {
+    const data = this.getAnalyticsData();
+    data.exports.push({
+      date: new Date().toISOString(),
+      format: format,
+      templateId: templateId
+    });
+    this.saveAnalyticsData(data);
+  }
+
+  /**
+   * Get resume score history
+   */
+  getScoreHistory(days = 30) {
+    const data = this.getAnalyticsData();
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+
+    return data.resumeScores
+      .filter(score => new Date(score.date) >= cutoff)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+  }
+
+  /**
+   * Get keyword trends
+   */
+  getKeywordTrends(limit = 10) {
+    const data = this.getAnalyticsData();
+    return Object.entries(data.keywords)
+      .map(([keyword, stats]) => ({
+        keyword,
+        ...stats,
+        trendScore: this.calculateKeywordTrend(keyword, data.keywords[keyword])
+      }))
+      .sort((a, b) => b.mentions - a.mentions)
+      .slice(0, limit);
+  }
+
+  /**
+   * Calculate keyword trend score
+   */
+  calculateKeywordTrend(keyword, stats) {
+    // Simple trend: mentions in last 7 days vs previous 7 days
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+    const data = this.getAnalyticsData();
+    const recentMentions = data.resumeScores
+      .filter(s => new Date(s.date) >= sevenDaysAgo && s.keywords.includes(keyword))
+      .length;
+    const previousMentions = data.resumeScores
+      .filter(s => new Date(s.date) >= fourteenDaysAgo && new Date(s.date) < sevenDaysAgo && s.keywords.includes(keyword))
+      .length;
+
+    if (previousMentions === 0) return recentMentions > 0 ? 2.0 : 1.0;
+    return recentMentions / previousMentions;
+  }
+
+  /**
+   * Get template usage statistics
+   */
+  getTemplateStats() {
+    const data = this.getAnalyticsData();
+    return Object.entries(data.templates)
+      .map(([templateId, stats]) => ({
+        templateId,
+        usageCount: stats.usageCount,
+        avgScore: stats.usageCount > 0 ? Math.round(stats.totalScore / stats.usageCount) : 0,
+        successRate: stats.successRate
+      }))
+      .sort((a, b) => b.usageCount - a.usageCount);
+  }
+
+  /**
+   * Get export history
+   */
+  getExportHistory(days = 30) {
+    const data = this.getAnalyticsData();
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+
+    return data.exports
+      .filter(exp => new Date(exp.date) >= cutoff)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
   /**

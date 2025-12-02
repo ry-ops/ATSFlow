@@ -1,0 +1,285 @@
+<!-- ResuMate Unified Navigation Bar -->
+<!-- Include this component in all pages -->
+
+<nav class="resumate-navbar" role="navigation" aria-label="Main navigation">
+  <!-- Skip to main content (accessibility) -->
+  <a href="#main-content" class="skip-to-main">Skip to main content</a>
+
+  <div class="navbar-container">
+    <!-- Brand -->
+    <a href="/index.html" class="navbar-brand">
+      <span class="navbar-logo" aria-hidden="true">🎯</span>
+      <span class="navbar-title">ResuMate</span>
+    </a>
+
+    <!-- Mobile Toggle -->
+    <button class="navbar-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navbar-menu">
+      ☰
+    </button>
+
+    <!-- Navigation Links -->
+    <ul class="navbar-nav" id="navbar-menu" role="menubar">
+      <!-- Core Features -->
+      <li class="nav-item nav-dropdown" role="none">
+        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" role="menuitem">
+          <span class="nav-link-icon" aria-hidden="true">📝</span>
+          <span>Build</span>
+          <span aria-hidden="true">▾</span>
+        </button>
+        <ul class="nav-dropdown-menu" role="menu" aria-label="Build submenu">
+          <li class="nav-dropdown-item" role="none">
+            <a href="/builder.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">✏️</span>
+              Visual Builder
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-preview.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">👁️</span>
+              Live Preview
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/template-test.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">🎨</span>
+              Templates
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- AI Features -->
+      <li class="nav-item nav-dropdown" role="none">
+        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" role="menuitem">
+          <span class="nav-link-icon" aria-hidden="true">🤖</span>
+          <span>AI Tools</span>
+          <span aria-hidden="true">▾</span>
+        </button>
+        <ul class="nav-dropdown-menu" role="menu" aria-label="AI Tools submenu">
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-ai.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">✨</span>
+              AI Writer
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-job-tailor.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">🎯</span>
+              Job Tailoring
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-proofread.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">✓</span>
+              Proofreading
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/parser-demo.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">📄</span>
+              Resume Parser
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Optimization -->
+      <li class="nav-item nav-dropdown" role="none">
+        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" role="menuitem">
+          <span class="nav-link-icon" aria-hidden="true">📊</span>
+          <span>Optimize</span>
+          <span aria-hidden="true">▾</span>
+        </button>
+        <ul class="nav-dropdown-menu" role="menu" aria-label="Optimize submenu">
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-ats-scanner.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">🔍</span>
+              ATS Scanner
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/versions.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">📋</span>
+              Version Manager
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/linkedin-integration.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">💼</span>
+              LinkedIn
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Export & Applications -->
+      <li class="nav-item nav-dropdown" role="none">
+        <button class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false" role="menuitem">
+          <span class="nav-link-icon" aria-hidden="true">📤</span>
+          <span>Export</span>
+          <span aria-hidden="true">▾</span>
+        </button>
+        <ul class="nav-dropdown-menu" role="menu" aria-label="Export submenu">
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-export.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">💾</span>
+              Export Resume
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-coverletter.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">📧</span>
+              Cover Letter
+            </a>
+          </li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-templates.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">📑</span>
+              Letter Templates
+            </a>
+          </li>
+          <li class="nav-dropdown-divider" role="separator"></li>
+          <li class="nav-dropdown-item" role="none">
+            <a href="/test-tracker.html" class="nav-dropdown-link" role="menuitem">
+              <span aria-hidden="true">📈</span>
+              Job Tracker
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Quick Actions -->
+    <div class="navbar-actions">
+      <button class="nav-action-btn" onclick="window.location.href='/builder.html'" aria-label="Create new resume">
+        <span aria-hidden="true">+</span>
+        New Resume
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Breadcrumbs (optional - add to pages that need context) -->
+<!--
+<nav class="breadcrumbs" aria-label="Breadcrumb navigation">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item">
+      <a href="/index.html" class="breadcrumb-link">Home</a>
+    </li>
+    <li class="breadcrumb-separator" aria-hidden="true">/</li>
+    <li class="breadcrumb-item">
+      <span class="breadcrumb-current" aria-current="page">Current Page</span>
+    </li>
+  </ol>
+</nav>
+-->
+
+<!-- Feature Shortcuts (Quick Access Menu) -->
+<div class="feature-shortcuts">
+  <button class="shortcuts-toggle" aria-label="Toggle quick access menu" aria-expanded="false" aria-controls="shortcuts-menu">
+    ⚡
+  </button>
+
+  <div class="shortcuts-menu" id="shortcuts-menu" role="menu" aria-label="Quick access menu">
+    <div class="shortcuts-header">
+      <h3>Quick Access</h3>
+    </div>
+    <ul class="shortcuts-list">
+      <li class="shortcuts-item">
+        <a href="/builder.html" class="shortcuts-link" role="menuitem">
+          <span class="shortcuts-icon" aria-hidden="true">✏️</span>
+          <div class="shortcuts-content">
+            <h4 class="shortcuts-title">Resume Builder</h4>
+            <p class="shortcuts-description">Create and edit your resume</p>
+          </div>
+        </a>
+      </li>
+      <li class="shortcuts-item">
+        <a href="/test-job-tailor.html" class="shortcuts-link" role="menuitem">
+          <span class="shortcuts-icon" aria-hidden="true">🎯</span>
+          <div class="shortcuts-content">
+            <h4 class="shortcuts-title">Job Tailoring</h4>
+            <p class="shortcuts-description">Match resume to job posting</p>
+          </div>
+        </a>
+      </li>
+      <li class="shortcuts-item">
+        <a href="/test-ats-scanner.html" class="shortcuts-link" role="menuitem">
+          <span class="shortcuts-icon" aria-hidden="true">🔍</span>
+          <div class="shortcuts-content">
+            <h4 class="shortcuts-title">ATS Scanner</h4>
+            <p class="shortcuts-description">Check ATS compatibility</p>
+          </div>
+        </a>
+      </li>
+      <li class="shortcuts-item">
+        <a href="/test-export.html" class="shortcuts-link" role="menuitem">
+          <span class="shortcuts-icon" aria-hidden="true">💾</span>
+          <div class="shortcuts-content">
+            <h4 class="shortcuts-title">Export</h4>
+            <p class="shortcuts-description">Download in multiple formats</p>
+          </div>
+        </a>
+      </li>
+      <li class="shortcuts-item">
+        <a href="/test-tracker.html" class="shortcuts-link" role="menuitem">
+          <span class="shortcuts-icon" aria-hidden="true">📈</span>
+          <div class="shortcuts-content">
+            <h4 class="shortcuts-title">Job Tracker</h4>
+            <p class="shortcuts-description">Track your applications</p>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Navigation JavaScript -->
+<script>
+  // Mobile navigation toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.querySelector('.navbar-toggle');
+    const nav = document.querySelector('.navbar-nav');
+
+    if (toggle && nav) {
+      toggle.addEventListener('click', function() {
+        nav.classList.toggle('mobile-open');
+        const isOpen = nav.classList.contains('mobile-open');
+        toggle.setAttribute('aria-expanded', isOpen);
+      });
+    }
+
+    // Feature shortcuts toggle
+    const shortcutsToggle = document.querySelector('.shortcuts-toggle');
+    const shortcutsMenu = document.querySelector('.shortcuts-menu');
+
+    if (shortcutsToggle && shortcutsMenu) {
+      shortcutsToggle.addEventListener('click', function() {
+        shortcutsMenu.classList.toggle('active');
+        const isActive = shortcutsMenu.classList.contains('active');
+        shortcutsToggle.setAttribute('aria-expanded', isActive);
+      });
+
+      // Close on click outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.feature-shortcuts')) {
+          shortcutsMenu.classList.remove('active');
+          shortcutsToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    // Highlight active page
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-link, .nav-dropdown-link').forEach(link => {
+      if (link.getAttribute('href') === `/${currentPage}` || link.getAttribute('href') === currentPage) {
+        link.classList.add('active');
+        // Also mark parent dropdown as active
+        const dropdown = link.closest('.nav-dropdown');
+        if (dropdown) {
+          dropdown.querySelector('.nav-dropdown-toggle')?.classList.add('active');
+        }
+      }
+    });
+  });
+</script>
