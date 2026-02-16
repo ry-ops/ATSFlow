@@ -1,6 +1,6 @@
 {
   "name": "atsflow",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "AI-powered resume optimization CLI for Claude Code - ATS optimization, job tailoring, and intelligent document generation",
   "main": "server.js",
   "bin": {
@@ -43,5 +43,8 @@
   "bugs": {
     "url": "https://github.com/ry-ops/ATSFlow/issues"
   },
-  "homepage": "https://github.com/ry-ops/ATSFlow#readme"
+  "homepage": "https://github.com/ry-ops/ATSFlow#readme",
+  "overrides": {
+    "qs": ">=6.14.2"
+  }
 }
