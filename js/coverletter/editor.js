@@ -438,22 +438,25 @@ class CoverLetterEditor {
     _displayAnalysis(analysis) {
         if (!this.elements.analysisResults) return;
 
+        // HTML-escape helper to prevent XSS from analysis data
+        const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
         let html = `
             <div class="analysis-summary">
-                <h3>Overall Score: ${analysis.overallScore}/100</h3>
-                <p>Word Count: ${analysis.wordCount}</p>
+                <h3>Overall Score: ${esc(analysis.overallScore)}/100</h3>
+                <p>Word Count: ${esc(analysis.wordCount)}</p>
             </div>
 
             <div class="analysis-scores">
                 <h4>Section Scores:</h4>
                 <ul>
-                    <li>Opening: ${analysis.scores.opening}/100</li>
-                    <li>Specificity: ${analysis.scores.specificity}/100</li>
-                    <li>Relevance: ${analysis.scores.relevance}/100</li>
-                    <li>Impact: ${analysis.scores.impact}/100</li>
-                    <li>Closing: ${analysis.scores.closing}/100</li>
-                    <li>Tone: ${analysis.scores.tone}/100</li>
-                    <li>Grammar: ${analysis.scores.grammar}/100</li>
+                    <li>Opening: ${esc(analysis.scores.opening)}/100</li>
+                    <li>Specificity: ${esc(analysis.scores.specificity)}/100</li>
+                    <li>Relevance: ${esc(analysis.scores.relevance)}/100</li>
+                    <li>Impact: ${esc(analysis.scores.impact)}/100</li>
+                    <li>Closing: ${esc(analysis.scores.closing)}/100</li>
+                    <li>Tone: ${esc(analysis.scores.tone)}/100</li>
+                    <li>Grammar: ${esc(analysis.scores.grammar)}/100</li>
                 </ul>
             </div>
         `;
@@ -463,7 +466,7 @@ class CoverLetterEditor {
                 <div class="analysis-strengths">
                     <h4>Strengths:</h4>
                     <ul>
-                        ${analysis.strengths.map(s => `<li>${s}</li>`).join('')}
+                        ${analysis.strengths.map(s => `<li>${esc(s)}</li>`).join('')}
                     </ul>
                 </div>
             `;
@@ -474,7 +477,7 @@ class CoverLetterEditor {
                 <div class="analysis-weaknesses">
                     <h4>Areas for Improvement:</h4>
                     <ul>
-                        ${analysis.weaknesses.map(w => `<li>${w}</li>`).join('')}
+                        ${analysis.weaknesses.map(w => `<li>${esc(w)}</li>`).join('')}
                     </ul>
                 </div>
             `;
@@ -486,9 +489,9 @@ class CoverLetterEditor {
                     <h4>Issues Found:</h4>
                     <ul>
                         ${analysis.issues.map(issue => `
-                            <li class="issue-${issue.severity}">
-                                <strong>${issue.type}:</strong> ${issue.message}
-                                ${issue.suggestion ? `<br><em>Suggestion: ${issue.suggestion}</em>` : ''}
+                            <li class="issue-${esc(issue.severity)}">
+                                <strong>${esc(issue.type)}:</strong> ${esc(issue.message)}
+                                ${issue.suggestion ? `<br><em>Suggestion: ${esc(issue.suggestion)}</em>` : ''}
                             </li>
                         `).join('')}
                     </ul>
@@ -501,7 +504,7 @@ class CoverLetterEditor {
                 <div class="analysis-suggestions">
                     <h4>Suggestions:</h4>
                     <ul>
-                        ${analysis.suggestions.map(s => `<li>${s}</li>`).join('')}
+                        ${analysis.suggestions.map(s => `<li>${esc(s)}</li>`).join('')}
                     </ul>
                 </div>
             `;
@@ -561,10 +564,13 @@ class CoverLetterEditor {
 
         const content = this.elements.editor?.value || this.currentLetter;
 
-        // Convert line breaks to paragraphs
+        // Convert line breaks to paragraphs with escaping to prevent XSS
         const html = content
             .split('\n\n')
-            .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+            .map(para => {
+                const escaped = para.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return `<p>${escaped.replace(/\n/g, '<br>')}</p>`;
+            })
             .join('');
 
         this.elements.preview.innerHTML = html;
@@ -572,7 +578,11 @@ class CoverLetterEditor {
         // Update structured view if available
         if (this.elements.structuredView && typeof coverLetterStructure !== 'undefined') {
             const structure = coverLetterStructure.parseLetterIntoSections(content);
-            this.elements.structuredView.innerHTML = coverLetterStructure.formatWithSectionMarkers(structure);
+            const structuredHtml = coverLetterStructure.formatWithSectionMarkers(structure);
+            // Sanitize structured output before inserting as HTML
+            const sanitizedHtml = structuredHtml
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            this.elements.structuredView.textContent = structuredHtml;
         }
     }
 

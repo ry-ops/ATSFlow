@@ -181,6 +181,14 @@ class DataBridge {
         try {
             const data = this.getUserData();
             const parts = path.split('.');
+
+            // Reject prototype pollution attempts
+            const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
+            if (parts.some(p => dangerousKeys.includes(p))) {
+                console.warn('[Security] Blocked potential prototype pollution attempt');
+                return false;
+            }
+
             let current = data;
 
             // Navigate to parent object
@@ -219,6 +227,14 @@ class DataBridge {
         try {
             const data = this.getUserData();
             const parts = path.split('.');
+
+            // Reject prototype pollution attempts
+            const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
+            if (parts.some(p => dangerousKeys.includes(p))) {
+                console.warn('[Security] Blocked potential prototype pollution attempt');
+                return defaultValue;
+            }
+
             let current = data;
 
             for (const part of parts) {

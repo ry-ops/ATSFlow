@@ -240,10 +240,17 @@ class CryptoManager {
      */
     generateSecurePassphrase(length = 32) {
         const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-        const values = crypto.getRandomValues(new Uint8Array(length));
-        return Array.from(values)
-            .map(x => charset[x % charset.length])
-            .join('');
+        const maxValid = 256 - (256 % charset.length); // Reject values >= maxValid to prevent modulo bias
+        let result = '';
+        while (result.length < length) {
+            const values = crypto.getRandomValues(new Uint8Array(length * 2));
+            for (const x of values) {
+                if (x < maxValid && result.length < length) {
+                    result += charset[x % charset.length];
+                }
+            }
+        }
+        return result;
     }
 }
 

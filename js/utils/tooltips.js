@@ -520,7 +520,7 @@ class TooltipManager {
         const tipTextEl = this.tooltipElement.querySelector('.tip-text');
 
         titleEl.textContent = content.title || 'Info';
-        contentEl.innerHTML = content.content || '';
+        contentEl.textContent = content.content || '';
 
         if (content.tip) {
             tipTextEl.textContent = content.tip;

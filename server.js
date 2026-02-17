@@ -117,7 +117,17 @@ app.use((req, res, next) => {
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static(__dirname));
+
+// Block access to sensitive server files
+app.use((req, res, next) => {
+    const blocked = ['/server.js', '/package.json', '/package-lock.json', '/.env', '/.gitignore', '/node_modules'];
+    const lower = req.path.toLowerCase();
+    if (blocked.some(b => lower === b || lower.startsWith('/node_modules/') || lower.startsWith('/.'))) {
+        return res.status(404).send('Not found');
+    }
+    next();
+});
+app.use(express.static(__dirname, { dotfiles: 'deny', index: false }));
 
 // Rate limiting store (in-memory for simplicity, use Redis for production)
 const rateLimitStore = new Map();
@@ -300,8 +310,12 @@ app.post('/api/parse-batch', rateLimit, upload.array('resumes', 10), async (req,
             });
         }
 
-        const apiKey = req.body.apiKey || null;
-        const useAI = req.body.useAI === 'true' || req.body.useAI === true;
+        const apiKey = req.body?.apiKey || null;
+        const useAI = req.body?.useAI === 'true' || req.body?.useAI === true;
+
+        if (!Array.isArray(req.files)) {
+            return res.status(400).json({ success: false, error: 'Invalid file upload' });
+        }
 
         logger.info(`[Batch Parse] Processing ${req.files.length} files`);
 
@@ -605,6 +619,11 @@ app.post('/api/fetch-job', rateLimit, async (req, res) => {
         // Validate URL format
         const urlObj = new URL(url);
 
+        // Only allow HTTP/HTTPS protocols
+        if (urlObj.protocol !== 'https:' && urlObj.protocol !== 'http:') {
+            return res.status(400).json({ error: 'Only HTTP/HTTPS URLs are allowed' });
+        }
+
         // Whitelist of allowed job board domains
         const allowedDomains = [
             'linkedin.com', 'www.linkedin.com',
@@ -624,9 +643,7 @@ app.post('/api/fetch-job', rateLimit, async (req, res) => {
 
         const hostname = urlObj.hostname.toLowerCase();
         const isAllowed = allowedDomains.some(domain =>
-            hostname === domain || hostname.endsWith('.' + domain) ||
-            hostname.includes('myworkdayjobs.com') || hostname.includes('greenhouse.io') ||
-            hostname.includes('lever.co')
+            hostname === domain || hostname.endsWith('.' + domain)
         );
 
         if (!isAllowed) {
@@ -700,12 +717,17 @@ app.post('/api/fetch-job', rateLimit, async (req, res) => {
  * @returns {string} - Extracted text content
  */
 function extractJobContent(html, site) {
-    // Remove script and style tags
-    let cleaned = html
-        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-        .replace(/<noscript[^>]*>[\s\S]*?<\/noscript>/gi, '')
-        .replace(/<!--[\s\S]*?-->/g, '');
+    // Remove script and style tags (loop to handle nested/reconstructed cases)
+    let cleaned = html;
+    let prev;
+    do {
+        prev = cleaned;
+        cleaned = cleaned
+            .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+            .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+            .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, '')
+            .replace(/<!--[\s\S]*?-->/g, '');
+    } while (cleaned !== prev);
 
     // Site-specific selectors (look for common job description containers)
     const jobSelectors = [
@@ -773,7 +795,6 @@ function stripHtml(html) {
         .replace(/<li[^>]*>/gi, '• ')
         .replace(/<[^>]+>/g, '')
         .replace(/&nbsp;/g, ' ')
-        .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
@@ -781,6 +802,7 @@ function stripHtml(html) {
         .replace(/&mdash;/g, '—')
         .replace(/&ndash;/g, '–')
         .replace(/&bull;/g, '•')
+        .replace(/&amp;/g, '&')  // Must be LAST to prevent double-decoding
         .trim();
 }
 
@@ -923,12 +945,12 @@ Object.entries(legacyRedirects).forEach(([oldPath, newPath]) => {
 });
 
 // Serve workflow.html as main entry point
-app.get('/', (req, res) => {
+app.get('/', rateLimit, (req, res) => {
     res.sendFile(path.join(__dirname, 'workflow.html'));
 });
 
 // Serve legacy index.html at /legacy
-app.get('/legacy', (req, res) => {
+app.get('/legacy', rateLimit, (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 

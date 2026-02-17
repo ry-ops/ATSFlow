@@ -123,17 +123,16 @@ class InputSanitizer {
      * @returns {string} Cleaned text
      */
     removeDangerousPatterns(text) {
-        // Remove javascript: protocol
-        text = text.replace(/javascript:/gi, '');
-
-        // Remove data: protocol (can be used for XSS)
-        text = text.replace(/data:text\/html/gi, '');
-
-        // Remove vbscript: protocol
-        text = text.replace(/vbscript:/gi, '');
-
-        // Remove on* event handlers
-        text = text.replace(/on\w+\s*=/gi, '');
+        // Loop until stable to prevent bypass via reconstructed patterns
+        // (e.g., "javajavascript:script:" becoming "javascript:" after one pass)
+        let prev;
+        do {
+            prev = text;
+            text = text.replace(/javascript\s*:/gi, '');
+            text = text.replace(/data\s*:\s*text\/html/gi, '');
+            text = text.replace(/vbscript\s*:/gi, '');
+            text = text.replace(/on\w+\s*=/gi, '');
+        } while (text !== prev);
 
         return text;
     }
