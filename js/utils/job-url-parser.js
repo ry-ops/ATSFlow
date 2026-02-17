@@ -13,96 +13,96 @@ class JobURLParser {
             linkedin: {
                 name: 'LinkedIn',
                 patterns: [
-                    /linkedin\.com\/jobs\/view/,
-                    /linkedin\.com\/jobs\/collections/,
-                    /linkedin\.com\/job\//
+                    /(?:\/\/|\.)+linkedin\.com\/jobs\/view/,
+                    /(?:\/\/|\.)+linkedin\.com\/jobs\/collections/,
+                    /(?:\/\/|\.)+linkedin\.com\/job\//
                 ],
                 icon: 'https://cdn-icons-png.flaticon.com/24/174/174857.png'
             },
             indeed: {
                 name: 'Indeed',
                 patterns: [
-                    /indeed\.com\/viewjob/,
-                    /indeed\.com\/jobs/,
-                    /indeed\.com\/job\//
+                    /(?:\/\/|\.)+indeed\.com\/viewjob/,
+                    /(?:\/\/|\.)+indeed\.com\/jobs/,
+                    /(?:\/\/|\.)+indeed\.com\/job\//
                 ],
                 icon: 'https://cdn-icons-png.flaticon.com/24/5969/5969158.png'
             },
             glassdoor: {
                 name: 'Glassdoor',
                 patterns: [
-                    /glassdoor\.com\/job-listing/,
-                    /glassdoor\.com\/Job\//
+                    /(?:\/\/|\.)+glassdoor\.com\/job-listing/,
+                    /(?:\/\/|\.)+glassdoor\.com\/Job\//
                 ],
                 icon: 'https://cdn-icons-png.flaticon.com/24/5969/5969107.png'
             },
             ziprecruiter: {
                 name: 'ZipRecruiter',
                 patterns: [
-                    /ziprecruiter\.com\/jobs/,
-                    /ziprecruiter\.com\/c\//
+                    /(?:\/\/|\.)+ziprecruiter\.com\/jobs/,
+                    /(?:\/\/|\.)+ziprecruiter\.com\/c\//
                 ],
                 icon: null
             },
             monster: {
                 name: 'Monster',
                 patterns: [
-                    /monster\.com\/job-openings/,
-                    /monster\.com\/jobs/
+                    /(?:\/\/|\.)+monster\.com\/job-openings/,
+                    /(?:\/\/|\.)+monster\.com\/jobs/
                 ],
                 icon: null
             },
             dice: {
                 name: 'Dice',
                 patterns: [
-                    /dice\.com\/job-detail/,
-                    /dice\.com\/jobs/
+                    /(?:\/\/|\.)+dice\.com\/job-detail/,
+                    /(?:\/\/|\.)+dice\.com\/jobs/
                 ],
                 icon: null
             },
             simplyhired: {
                 name: 'SimplyHired',
                 patterns: [
-                    /simplyhired\.com\/job/,
-                    /simplyhired\.com\/search/
+                    /(?:\/\/|\.)+simplyhired\.com\/job/,
+                    /(?:\/\/|\.)+simplyhired\.com\/search/
                 ],
                 icon: null
             },
             careerbuilder: {
                 name: 'CareerBuilder',
                 patterns: [
-                    /careerbuilder\.com\/job/
+                    /(?:\/\/|\.)+careerbuilder\.com\/job/
                 ],
                 icon: null
             },
             greenhouse: {
                 name: 'Greenhouse',
                 patterns: [
-                    /greenhouse\.io\/.*\/jobs/,
-                    /boards\.greenhouse\.io/
+                    /(?:\/\/|\.)+greenhouse\.io\/.*\/jobs/,
+                    /(?:\/\/|\.)+boards\.greenhouse\.io/
                 ],
                 icon: null
             },
             lever: {
                 name: 'Lever',
                 patterns: [
-                    /lever\.co\/.*\//,
-                    /jobs\.lever\.co/
+                    /(?:\/\/|\.)+lever\.co\/.*\//,
+                    /(?:\/\/|\.)+jobs\.lever\.co/
                 ],
                 icon: null
             },
             workday: {
                 name: 'Workday',
                 patterns: [
-                    /myworkdayjobs\.com/,
-                    /wd\d+\.myworkdayjobs\.com/
+                    /(?:\/\/|\.)+myworkdayjobs\.com/,
+                    /(?:\/\/|\.)+wd\d+\.myworkdayjobs\.com/
                 ],
                 icon: null
             },
             builtin: {
                 name: 'Built In',
                 patterns: [
-                    /builtin\.com\/job/
+                    /(?:\/\/|\.)+builtin\.com\/job/
                 ],
                 icon: null
             }

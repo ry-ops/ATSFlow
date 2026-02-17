@@ -204,7 +204,10 @@ class WorkflowState {
      * @returns {string} Session ID
      */
     generateSessionId() {
-        return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const arr = new Uint8Array(9);
+        crypto.getRandomValues(arr);
+        const rand = Array.from(arr).map(b => b.toString(36).padStart(2, '0')).join('').substr(0, 9);
+        return `session_${Date.now()}_${rand}`;
     }
 
     /**
@@ -224,6 +227,14 @@ class WorkflowState {
     get(path, defaultValue = null) {
         try {
             const parts = path.split('.');
+
+            // Reject prototype pollution attempts
+            const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
+            if (parts.some(p => dangerousKeys.includes(p))) {
+                console.warn('[Security] Blocked potential prototype pollution attempt');
+                return defaultValue;
+            }
+
             let value = this.state;
 
             for (const part of parts) {
@@ -251,6 +262,14 @@ class WorkflowState {
             // Clone current state for immutable update
             const newState = JSON.parse(JSON.stringify(this.state));
             const parts = path.split('.');
+
+            // Reject prototype pollution attempts
+            const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
+            if (parts.some(p => dangerousKeys.includes(p))) {
+                console.warn('[Security] Blocked potential prototype pollution attempt');
+                return false;
+            }
+
             let current = newState;
 
             // Navigate to parent
@@ -477,13 +496,17 @@ class WorkflowState {
             };
             sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionData));
 
-            // Save persistent data (API key only) to localStorage
-            const persistentData = {
-                apiKey: this.state.inputs.preferences.apiKey,
+            // Save non-sensitive persistent data to localStorage
+            const safeData = {
                 theme: this.state.inputs.preferences.theme,
                 autoSave: this.state.inputs.preferences.autoSave
             };
-            localStorage.setItem(this.PERSISTENT_KEY, JSON.stringify(persistentData));
+            localStorage.setItem(this.PERSISTENT_KEY, JSON.stringify(safeData));
+
+            // Store API key in sessionStorage (per-tab, not persisted across browser restarts)
+            if (this.state.inputs.preferences.apiKey) {
+                sessionStorage.setItem('resumate_api_key', this.state.inputs.preferences.apiKey);
+            }
 
             return true;
         } catch (error) {
@@ -524,13 +547,20 @@ class WorkflowState {
             if (persistentSerialized) {
                 const persistentData = JSON.parse(persistentSerialized);
 
-                // Merge persistent data (API key) into state
+                // Merge non-sensitive persistent data into state
                 this.state.inputs.preferences = {
                     ...this.state.inputs.preferences,
                     ...persistentData
                 };
 
                 console.log('[WorkflowState] Hydrated persistent data from localStorage');
+            }
+
+            // Restore API key from sessionStorage (per-tab, short-lived)
+            const sessionApiKey = sessionStorage.getItem('resumate_api_key');
+            if (sessionApiKey) {
+                this.state.inputs.preferences.apiKey = sessionApiKey;
+                console.log('[WorkflowState] Hydrated API key from sessionStorage');
             }
 
             return true;

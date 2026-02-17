@@ -561,10 +561,13 @@ class CoverLetterEditor {
 
         const content = this.elements.editor?.value || this.currentLetter;
 
-        // Convert line breaks to paragraphs
+        // Convert line breaks to paragraphs with escaping to prevent XSS
         const html = content
             .split('\n\n')
-            .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+            .map(para => {
+                const escaped = para.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return `<p>${escaped.replace(/\n/g, '<br>')}</p>`;
+            })
             .join('');
 
         this.elements.preview.innerHTML = html;
@@ -572,7 +575,11 @@ class CoverLetterEditor {
         // Update structured view if available
         if (this.elements.structuredView && typeof coverLetterStructure !== 'undefined') {
             const structure = coverLetterStructure.parseLetterIntoSections(content);
-            this.elements.structuredView.innerHTML = coverLetterStructure.formatWithSectionMarkers(structure);
+            const structuredHtml = coverLetterStructure.formatWithSectionMarkers(structure);
+            // Sanitize structured output before inserting as HTML
+            const sanitizedHtml = structuredHtml
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            this.elements.structuredView.textContent = structuredHtml;
         }
     }
 

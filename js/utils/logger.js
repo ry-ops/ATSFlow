@@ -170,11 +170,14 @@ class Logger {
         const prefix = this.formatMessage(level, context, args);
         const color = this.colors[level];
 
+        // Sanitize prefix to prevent log injection via newlines
+        const safePrefix = prefix.replace(/[\r\n]/g, '');
+
         // Log with color if enabled
         if (this.config.colorize && color && typeof console !== 'undefined') {
-            console.log(`%c${prefix}`, `color: ${color}; font-weight: bold`, ...args);
+            console.log(`%c${safePrefix}`, `color: ${color}; font-weight: bold`, ...args);
         } else if (typeof console !== 'undefined') {
-            console.log(prefix, ...args);
+            console.log(safePrefix, ...args);
         }
     }
 

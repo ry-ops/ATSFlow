@@ -47,7 +47,10 @@ class WorkflowAnalytics {
    * Generate unique session ID
    */
   generateSessionId() {
-    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const arr = new Uint8Array(9);
+    crypto.getRandomValues(arr);
+    const rand = Array.from(arr).map(b => b.toString(36).padStart(2, '0')).join('').substr(0, 9);
+    return `session_${Date.now()}_${rand}`;
   }
 
   /**

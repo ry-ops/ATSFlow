@@ -93,12 +93,12 @@ window.ATSFlowDebug = {
     resetWorkflow() {
         console.log('🔄 Resetting workflow...');
 
-        // Clear localStorage (except API key)
-        const apiKey = localStorage.getItem('claude_api_key');
+        // Clear localStorage (API key is kept in sessionStorage, not localStorage)
         localStorage.clear();
+        // Preserve API key in sessionStorage (per-tab, not persisted)
+        const apiKey = sessionStorage.getItem('resumate_api_key');
         if (apiKey) {
-            localStorage.setItem('claude_api_key', apiKey);
-            console.log('✓ Preserved API key');
+            console.log('✓ API key preserved in sessionStorage');
         }
 
         // Reset workflow state object

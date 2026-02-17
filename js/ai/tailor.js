@@ -372,7 +372,10 @@ Provide 5-10 high-impact suggestions. Return ONLY the JSON object.`;
      * @returns {string} Session ID
      */
     generateSessionId() {
-        return 'tailor-session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        const arr = new Uint8Array(9);
+        crypto.getRandomValues(arr);
+        const rand = Array.from(arr).map(b => b.toString(36).padStart(2, '0')).join('').substr(0, 9);
+        return 'tailor-session-' + Date.now() + '-' + rand;
     }
 }
 
