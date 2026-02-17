@@ -205,7 +205,12 @@ class WorkflowState {
      */
     generateSessionId() {
         const arr = new Uint8Array(9);
-        crypto.getRandomValues(arr);
+        if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+            crypto.getRandomValues(arr);
+        } else {
+            // Fallback for environments without Web Crypto
+            for (let i = 0; i < arr.length; i++) arr[i] = Math.floor(Math.random() * 256);
+        }
         const rand = Array.from(arr).map(b => b.toString(36).padStart(2, '0')).join('').substr(0, 9);
         return `session_${Date.now()}_${rand}`;
     }
@@ -506,6 +511,8 @@ class WorkflowState {
             // Store API key in sessionStorage (per-tab, not persisted across browser restarts)
             if (this.state.inputs.preferences.apiKey) {
                 sessionStorage.setItem('resumate_api_key', this.state.inputs.preferences.apiKey);
+            } else {
+                sessionStorage.removeItem('resumate_api_key');
             }
 
             return true;

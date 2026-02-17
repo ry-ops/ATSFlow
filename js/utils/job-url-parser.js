@@ -13,96 +13,96 @@ class JobURLParser {
             linkedin: {
                 name: 'LinkedIn',
                 patterns: [
-                    /(?:\/\/|\.)+linkedin\.com\/jobs\/view/,
-                    /(?:\/\/|\.)+linkedin\.com\/jobs\/collections/,
-                    /(?:\/\/|\.)+linkedin\.com\/job\//
+                    /^https?:\/\/(?:[\w-]+\.)*linkedin\.com\/jobs\/view/,
+                    /^https?:\/\/(?:[\w-]+\.)*linkedin\.com\/jobs\/collections/,
+                    /^https?:\/\/(?:[\w-]+\.)*linkedin\.com\/job\//
                 ],
                 icon: 'https://cdn-icons-png.flaticon.com/24/174/174857.png'
             },
             indeed: {
                 name: 'Indeed',
                 patterns: [
-                    /(?:\/\/|\.)+indeed\.com\/viewjob/,
-                    /(?:\/\/|\.)+indeed\.com\/jobs/,
-                    /(?:\/\/|\.)+indeed\.com\/job\//
+                    /^https?:\/\/(?:[\w-]+\.)*indeed\.com\/viewjob/,
+                    /^https?:\/\/(?:[\w-]+\.)*indeed\.com\/jobs/,
+                    /^https?:\/\/(?:[\w-]+\.)*indeed\.com\/job\//
                 ],
                 icon: 'https://cdn-icons-png.flaticon.com/24/5969/5969158.png'
             },
             glassdoor: {
                 name: 'Glassdoor',
                 patterns: [
-                    /(?:\/\/|\.)+glassdoor\.com\/job-listing/,
-                    /(?:\/\/|\.)+glassdoor\.com\/Job\//
+                    /^https?:\/\/(?:[\w-]+\.)*glassdoor\.com\/job-listing/,
+                    /^https?:\/\/(?:[\w-]+\.)*glassdoor\.com\/Job\//
                 ],
                 icon: 'https://cdn-icons-png.flaticon.com/24/5969/5969107.png'
             },
             ziprecruiter: {
                 name: 'ZipRecruiter',
                 patterns: [
-                    /(?:\/\/|\.)+ziprecruiter\.com\/jobs/,
-                    /(?:\/\/|\.)+ziprecruiter\.com\/c\//
+                    /^https?:\/\/(?:[\w-]+\.)*ziprecruiter\.com\/jobs/,
+                    /^https?:\/\/(?:[\w-]+\.)*ziprecruiter\.com\/c\//
                 ],
                 icon: null
             },
             monster: {
                 name: 'Monster',
                 patterns: [
-                    /(?:\/\/|\.)+monster\.com\/job-openings/,
-                    /(?:\/\/|\.)+monster\.com\/jobs/
+                    /^https?:\/\/(?:[\w-]+\.)*monster\.com\/job-openings/,
+                    /^https?:\/\/(?:[\w-]+\.)*monster\.com\/jobs/
                 ],
                 icon: null
             },
             dice: {
                 name: 'Dice',
                 patterns: [
-                    /(?:\/\/|\.)+dice\.com\/job-detail/,
-                    /(?:\/\/|\.)+dice\.com\/jobs/
+                    /^https?:\/\/(?:[\w-]+\.)*dice\.com\/job-detail/,
+                    /^https?:\/\/(?:[\w-]+\.)*dice\.com\/jobs/
                 ],
                 icon: null
             },
             simplyhired: {
                 name: 'SimplyHired',
                 patterns: [
-                    /(?:\/\/|\.)+simplyhired\.com\/job/,
-                    /(?:\/\/|\.)+simplyhired\.com\/search/
+                    /^https?:\/\/(?:[\w-]+\.)*simplyhired\.com\/job/,
+                    /^https?:\/\/(?:[\w-]+\.)*simplyhired\.com\/search/
                 ],
                 icon: null
             },
             careerbuilder: {
                 name: 'CareerBuilder',
                 patterns: [
-                    /(?:\/\/|\.)+careerbuilder\.com\/job/
+                    /^https?:\/\/(?:[\w-]+\.)*careerbuilder\.com\/job/
                 ],
                 icon: null
             },
             greenhouse: {
                 name: 'Greenhouse',
                 patterns: [
-                    /(?:\/\/|\.)+greenhouse\.io\/.*\/jobs/,
-                    /(?:\/\/|\.)+boards\.greenhouse\.io/
+                    /^https?:\/\/(?:[\w-]+\.)*greenhouse\.io\/.*\/jobs/,
+                    /^https?:\/\/(?:[\w-]+\.)*boards\.greenhouse\.io/
                 ],
                 icon: null
             },
             lever: {
                 name: 'Lever',
                 patterns: [
-                    /(?:\/\/|\.)+lever\.co\/.*\//,
-                    /(?:\/\/|\.)+jobs\.lever\.co/
+                    /^https?:\/\/(?:[\w-]+\.)*lever\.co\/.*\//,
+                    /^https?:\/\/(?:[\w-]+\.)*jobs\.lever\.co/
                 ],
                 icon: null
             },
             workday: {
                 name: 'Workday',
                 patterns: [
-                    /(?:\/\/|\.)+myworkdayjobs\.com/,
-                    /(?:\/\/|\.)+wd\d+\.myworkdayjobs\.com/
+                    /^https?:\/\/(?:[\w-]+\.)*myworkdayjobs\.com/,
+                    /^https?:\/\/(?:[\w-]+\.)*wd\d+\.myworkdayjobs\.com/
                 ],
                 icon: null
             },
             builtin: {
                 name: 'Built In',
                 patterns: [
-                    /(?:\/\/|\.)+builtin\.com\/job/
+                    /^https?:\/\/(?:[\w-]+\.)*builtin\.com\/job/
                 ],
                 icon: null
             }

@@ -373,8 +373,13 @@ Provide 5-10 high-impact suggestions. Return ONLY the JSON object.`;
      */
     generateSessionId() {
         const arr = new Uint8Array(9);
-        crypto.getRandomValues(arr);
-        const rand = Array.from(arr).map(b => b.toString(36).padStart(2, '0')).join('').substr(0, 9);
+        if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+            crypto.getRandomValues(arr);
+        } else {
+            // Fallback for environments without Web Crypto
+            for (let i = 0; i < arr.length; i++) arr[i] = Math.floor(Math.random() * 256);
+        }
+        const rand = Array.from(arr).map(b => b.toString(36)).join('').substr(0, 9);
         return 'tailor-session-' + Date.now() + '-' + rand;
     }
 }
