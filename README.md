@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/banner.svg" alt="ATSFlow: AI resume optimization against job descriptions, ATS-safe" width="100%"></p>
+
 # ATSFlow
 
 **AI-Powered Resume Optimization for Claude Code**
@@ -618,13 +620,13 @@ ATSFlow/
 
 ```bash
 # Run all tests
-npm test
+npx jest
 
 # Run specific test suite
-npm test -- --testNamePattern="ATS Scanner"
+npx jest --testNamePattern="ATS Scanner"
 
 # Watch mode
-npm run test:watch
+npx jest --watch
 ```
 
 ### Adding New Commands
@@ -753,3 +755,8 @@ Built with Claude Code by Anthropic.
 ---
 
 **Questions or Issues?** Open an issue on [GitHub](https://github.com/ry-ops/ATSFlow/issues)
+
+<!-- org-footer -->
+---
+
+<p align="center"><sub>Part of <a href="https://github.com/ry-ops">ry-ops</a> · building the pipes between infrastructure, automation, and observability · built by <a href="https://github.com/ry-ops">ry-ops</a></sub></p>
