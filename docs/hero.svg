@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="960" height="400" role="img" aria-labelledby="t d">
+  <title id="t">ATSFlow: tailor a resume to a job, ATS-safe</title>
+  <desc id="d">A resume and a job description go into ATSFlow; Claude tailors the resume, the ATS compatibility score rises from 58 to 92, and the job's key skills are matched. A CLI and API tool for resume optimization.</desc>
+  <defs><linearGradient id="title" x1="0" x2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset=".5" stop-color="#b58cff"/><stop offset="1" stop-color="#3ddc84"/></linearGradient></defs>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; fill:#e6ebf5; }
+    .muted { fill:#8b96ad; } .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    @keyframes in { 0%,3.00% { opacity:0; transform:translateX(-8px); } 6.50%,94.00% { opacity:1; transform:translateX(0); } 97.00%,100% { opacity:0 } } .in { animation:in 10.0s infinite; }
+    @keyframes jd { 0%,8.00% { opacity:0; transform:translateX(8px); } 11.50%,94.00% { opacity:1; transform:translateX(0); } 97.00%,100% { opacity:0 } } .jd { animation:jd 10.0s infinite; }
+    @keyframes out { 0%,46.00% { opacity:0; transform:translateX(8px); } 49.50%,94.00% { opacity:1; transform:translateX(0); } 97.00%,100% { opacity:0 } } .out { animation:out 10.0s infinite; }
+    @keyframes grow { 0%,32.00% { width:0; } 52.00%,96.00% { width:168px; } 100% { width:0; } } .grow { animation: grow 10.0s infinite; }
+    @keyframes n58 { 0%,32.00% { opacity:0; } 35.50%,47.00% { opacity:1; } 50.00%,100% { opacity:0 } } .n58 { animation:n58 10.0s infinite; }
+    @keyframes n92 { 0%,50.00% { opacity:0; } 53.50%,94.00% { opacity:1; } 97.00%,100% { opacity:0 } } .n92 { animation:n92 10.0s infinite; }
+    @keyframes kw0 { 0%,54.00% { opacity:0; transform:scale(.8); } 57.50%,94.00% { opacity:1; transform:scale(1); } 97.00%,100% { opacity:0 } } .kw0 { animation:kw0 10.0s infinite; }
+    @keyframes kw1 { 0%,56.50% { opacity:0; transform:scale(.8); } 60.00%,94.00% { opacity:1; transform:scale(1); } 97.00%,100% { opacity:0 } } .kw1 { animation:kw1 10.0s infinite; }
+    @keyframes kw2 { 0%,59.00% { opacity:0; transform:scale(.8); } 62.50%,94.00% { opacity:1; transform:scale(1); } 97.00%,100% { opacity:0 } } .kw2 { animation:kw2 10.0s infinite; }
+    @keyframes kw3 { 0%,61.50% { opacity:0; transform:scale(.8); } 65.00%,94.00% { opacity:1; transform:scale(1); } 97.00%,100% { opacity:0 } } .kw3 { animation:kw3 10.0s infinite; }
+    @media (prefers-reduced-motion: reduce) { * { animation:none !important; } .grow{width:168px} .n58{opacity:0} }
+  </style>
+  <rect width="960" height="400" rx="20" fill="#0f1420"/>
+  <text x="40" y="60" font-size="42" font-weight="800" style="fill:url(#title)">ATSFlow</text>
+  <text x="42" y="90" font-size="16" class="muted">Tailor your resume to the job — and make it past the ATS.</text>
+
+  <!-- inputs -->
+  <g class="in"><rect x="40" y="140" width="150" height="120" rx="12" fill="#161d2b" stroke="#2c3750"/>
+    <text x="56" y="162" font-size="11" font-weight="700" class="muted">RESUME</text>
+    <rect x="56" y="176" width="118" height="7" rx="3" fill="#2c3750"/><rect x="56" y="190" width="100" height="7" rx="3" fill="#2c3750"/><rect x="56" y="204" width="110" height="7" rx="3" fill="#2c3750"/><rect x="56" y="218" width="80" height="7" rx="3" fill="#2c3750"/>
+    <text x="56" y="248" font-size="10" class="mono muted">PDF · DOCX</text></g>
+  <g class="jd"><rect x="40" y="272" width="150" height="90" rx="12" fill="#161d2b" stroke="#2c3750"/>
+    <text x="56" y="294" font-size="11" font-weight="700" class="muted">JOB POST</text>
+    <rect x="56" y="308" width="118" height="7" rx="3" fill="#3a3550"/><rect x="56" y="322" width="96" height="7" rx="3" fill="#3a3550"/><rect x="56" y="336" width="108" height="7" rx="3" fill="#3a3550"/></g>
+
+  <!-- engine -->
+  <rect x="250" y="210" width="130" height="80" rx="14" fill="#1d2536" stroke="#b58cff" stroke-width="2.5"/>
+  <text x="315" y="245" text-anchor="middle" font-size="14" font-weight="800">ATSFlow</text>
+  <text x="315" y="264" text-anchor="middle" font-size="10" class="muted">Claude · 30+ checks</text>
+  <path d="M190 220 L 250 245 M190 310 L 250 265" stroke="#2c3750" stroke-width="2" stroke-dasharray="3 5"/>
+  <path d="M380 250 L 440 250" stroke="#2c3750" stroke-width="2" stroke-dasharray="3 5"/>
+
+  <!-- output: score -->
+  <g class="out">
+    <rect x="440" y="150" width="480" height="210" rx="14" fill="#161d2b" stroke="#2c3750"/>
+    <text x="460" y="180" font-size="13" font-weight="700">Tailored resume · ATS score</text>
+    <rect x="460" y="198" width="400" height="20" rx="10" fill="#232c3f"/>
+    <rect class="grow" x="460" y="198" height="20" rx="10" fill="#3ddc84"/>
+    <text class="n58" x="876" y="214" text-anchor="end" font-size="16" font-weight="800" style="fill:#ffb02e">58</text>
+    <text class="n92" x="876" y="214" text-anchor="end" font-size="18" font-weight="800" style="fill:#3ddc84">92</text>
+    <text x="460" y="244" font-size="12" font-weight="700" class="muted" letter-spacing=".08em">NOW MATCHING THE JOB'S KEY SKILLS</text>
+    <g class="kw0"><rect x="632" y="250" width="120" height="22" rx="11" fill="#1d3b2a" stroke="#3ddc84"/><text x="692" y="265" text-anchor="middle" font-size="11" style="fill:#9ff0c4">✓ Kubernetes</text></g><g class="kw1"><rect x="762" y="250" width="120" height="22" rx="11" fill="#1d3b2a" stroke="#3ddc84"/><text x="822" y="265" text-anchor="middle" font-size="11" style="fill:#9ff0c4">✓ Terraform</text></g><g class="kw2"><rect x="632" y="280" width="120" height="22" rx="11" fill="#1d3b2a" stroke="#3ddc84"/><text x="692" y="295" text-anchor="middle" font-size="11" style="fill:#9ff0c4">✓ CI/CD</text></g><g class="kw3"><rect x="762" y="280" width="120" height="22" rx="11" fill="#1d3b2a" stroke="#3ddc84"/><text x="822" y="295" text-anchor="middle" font-size="11" style="fill:#9ff0c4">✓ Python</text></g>
+    <text x="460" y="344" font-size="11" class="muted">Export to PDF · DOCX · TXT · JSON · HTML</text>
+  </g>
+</svg>
